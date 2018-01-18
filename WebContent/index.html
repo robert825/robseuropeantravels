@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Rob's Travel Blog</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<link rel="stylesheet" href="fancybox-3.0/dist/jquery.fancybox.min.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="fancybox-3.0/dist/jquery.fancybox.min.js"></script>
+	
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$(".fancybox").fancybox();
+	});
+	</script>
+    
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+        border: 5px solid #999;
+        padding: 5px;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 50px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+  	<p align=center style="color:rgb(0,0,102)"><font size = 5><b>Welcome to my semester abroad in Bath, England!</b></font></p>
+  	<p align=center style="color:rgb(255,0,0)"><font size = 3>This site is where you can find all of the places I have traveled while here in England for the semester. I will be updating this map as I continue to travel, so be sure to come back in the future to keep up with my adventures! You can click on each of the markers around the map for a recap of my trip and a good bit of pictures.</font></p>
+    <div id="map"></div>
+    <script>
+    var london = '28-31 January <br/ ><br/ >' + 
+	'I was fortunate to have Mom along with me when touching down in the UK for the first time in my life. ' + 
+	'The time difference hit me pretty hard, but we still crammed a ton into our brief few days. We stayed ' + 
+	'at a nice flat in Kensington, with quick access to the tube station and the rest of the city. <br/ ><br/>' +
+	'Over the course of the four days we were here, our adventures included seeing the Tower of London, ' + 
+	'Westminster Abbey, Buckingham Palace, Tower Bridge, the Churchill War Rooms, the National Gallery, ' + 
+	'the Tate Modern, the Wallace Collection, and the Book of Mormon at the Prince of Wales Theatre. Basically all ' +
+	'of your typical tourist experiences. Despite seeing so much, London is definitely a place I will return to ' + 
+	'throughout my stay. There was plenty still that I would like to see, including the Tower of London and a trip ' +
+	'on the Eye. “Tired of London, tired of life” is definitely an accurate phrase after seeing this city. <br/ ><br/ >' +
+	'3-4 March <br/ ><br/ >' +
+	'I made the last minute decision to join my buds Jocelyn and Andy for a night in London. It’s really cool that ' +
+	'the city is so close and easy to get into for a weekend trip. We revisited a few of the same places I had seen ' +
+	'earlier with my Mom, and also go to see the Harrod’s, British Museum, The Great Fire of London Memorial, St. ' +
+	'Paul’s Cathedral, and the Covent Garden Market. <br/ ><br/ >' +
+	'Andy had stayed at Wombats, an awesome hostel in East London earlier in his trip, and the three of us ended up ' +
+	'getting a room there for the night. It was not far from the Tower of London and the Thames, and was far better ' +
+	'than the first Oxford hostel that we had chosen. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Wallace Collection <br/ >' +
+	'House of Lords/Westminster Abbey area <br/ >' +
+	'Tower Bridge';
+	
+	var londonCaps = new Array('Our flat for a few days in Kensington', 'The hanging chandelier inside the Victoria & Albert Museum, pretty spectacular (I saw a similar-looking blown-glass chandelier like this in Harrod’s that was about 1/10 of the size of this one selling for 2 million pounds…)', 'Victoria & Albert Museum. Looking forward to seeing the original when I visit Florence!', 'Victoria & Albert Museum'," ", 'My lovely mother with the Picadilly Circus elephant in the background', 'Wellington Arch outside Buckingham', 'Wellington Arch', 'Me mum outside Buckingham', 'Buckingham Palace', 'Buckingham Palace', 'Buckingham Palace', 'Some statue outside Buckingham Palace. Photocreds Amy Fox', 'Big Ben', 'Big Ben', 'Westminster Abbey, would have tried to go inside had it not been way too ridiculously expensive', 'Westminster Abbey', 'Westminster Abbey with mom', 'House of Parliament', 'House of Parliament', 'House of Parliament', 'House of Parliament'," ", 'Also would have tried to go up in the Eye had it not been ridiculously expensive. Some day', 'London Eye', 'Big Ben and the House of Parliament', 'House of Parliament', 'House of Parliament', 'Big Ben', 'From the Westminster Bridge', 'From the Westminster Bridge', 'From the Westminster Bridge', 'From the Westminster Bridge', 'Inside the Wallace Collection. I’m not really an art guy but would 10/10 recommend this place it was pretty incredible. This guy looks like a wannabe Cav-Man, wahoowa', 'My lovely mama', 'Wallace Collection. This thing is made out of wood. The quality of the pic doesn’t really do this justice but if you zoom in you can really see how intricate this thing is. Pretty magnificent', 'Wallace Collection, also made out of wood with so many intricate patterns', 'Views from the London Bridge over to the Tower Bridge', 'London Bridge', 'London Bridge', 'Tower Bridge', 'Tower Bridge', 'Tower Bridge', 'Tower Bridge', 'Tower Bridge', 'Tower Bridge', 'Trafalgar Square from outside the National Portrait Gallery', 'Round 2 with my mates Andy and Jocelyn. Hyde Park', 'Victoria & Albert Museum', 'Victoria & Albert Museum', 'Victoria & Albert Museum', 'Victoria & Albert Museum', 'Victoria & Albert Museum', 'Victoria & Albert Museum', 'Victoria & Albert Museum', 'Tower of London', 'The Memorial to the Great Fire of London, 1666. I did a presentation on this the next week for my British History course', 'The Memorial to the Great Fire of London, 1666', 'St Paul’s Cathedral', 'St Paul’s Cathedral', 'St Paul’s Cathedral', 'St Paul’s Cathedral', 'I was in London briefly in the days following the terrorist incident on London Bridge. Lots of news crews and people gathering at the bridge to pay respect', 'Now that I took my basic “phone booth in front of Big Ben pic” I can say I have officially been to London', 'Now that I took my basic “phone booth in front of Big Ben pic” I can say I have officially been to London');
+	
+	var bath = 'My home base for the semester! <br/ ><br/ >' +
+	'I’m writing this only a few weeks into my trip, but I’m definitely really happy to call Bath home and am thankful ' +
+	'for finding this awesome town. There is a lot of history in this town, specifically surrounding the Roman Baths. ' +
+	'Some really unique sites around town would include Bath Abbey, the Royal Crescent, the Roman Baths, and my own personal ' +
+	'Bath-room (probably the first time I’ve had one to myself since Ryan was born). <br/ ><br/ >' +
+	'There are some really great restaurants, pubs, and bars around town that I have checked out frequently with my new friends. ' +
+	'I spend a lot of time with other exchange students, as well as some of the guys on the university basketball team that I have ' +
+	'been playing with. It is definitely good to have these British friends to show me around. The university is quite different' +
+	'from the grounds of UVA, and it’s been really cool to see what learning is like in another culture. I am taking two computer ' +
+	'science courses, and two British studies units that give me a better sense for the place that I am staying. <br/ ><br/ >' +
+	'Bath seems like the perfect fit for me; it isn’t an overwhelming city but still gives me easy access to nearby cities for ' +
+	'when I want to travel. Navigating some country roads outside the city throws me back a little bit to home, but the horse farms ' +
+	'are replaced with cattle and sheep pastures. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Roman Baths <br/ >' +
+	'Skyline Walk <br/ >' +
+	'Bath to Bristol bike path';
+	
+	var bathCaps = new Array('Rainbow over the Bath train station', 'The Royal Crescent of Bath. The spaces today are actually used as apartment flats, would be pretty cool to live here', 'The Roman Baths are what named the town of Bath what it is. Naturally warm, the Romans used these thousands of years ago', 'The Roman Baths', 'The Roman Baths', 'The Roman Baths', 'The Roman Baths', 'The Roman Baths', 'The Roman Baths', 'The Roman Baths with Bath Abbey in the background', 'The Roman Baths', 'The Roman Baths', 'Scoff’s near the city center is my favorite place to go for the classic English breakfast. This culture has also got me drinking tea now semi-regularly', 'Decided one day to take the Bristol and Bath Railway Path 16+ miles to Bristol by bike. I brutally underestimated its length and was completely exhausted getting back to Bath. It had some incredible views of the country though, most of these pics are closer to the Bath end of the trail', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path. This is how this trail gets its name today. These used to be the train tracks between Bath and Bristol. They picked up a couple miles outside of Bath and the remaining tracks don’t go much further from here', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Bristol and Bath Railway Path', 'Finally made it to Bristol. Found a basketball court', 'Bristol and Bath Railway Path', 'Bath basketball taking on Hengrove Park at home. Wearing #15', 'Bath basketball taking on Hengrove Park at home. Wearing #15', 'Bath basketball taking on Hengrove Park at home. Wearing #15', 'Bath basketball taking on Hengrove Park at home. Wearing #15', 'Bath basketball taking on Hengrove Park at home. Wearing #15', 'Dunk or layup? Probably a dunk', 'Definitely layup', 'Definitely layup', 'Bath basketball taking on Hengrove Park at home. Wearing #15', 'Bath basketball taking on Hengrove Park at home. Wearing #15', 'Bath rugby taking on Brive at The Rec. This match was the quarterfinal of the European Rugby Challenge. Brive is from France', 'Bath rugby', 'Bath rugby', 'Bath rugby. Love getting Bath Abbey way off in the background as well', 'Bath rugby', 'Bath rugby', 'Bath pulls it out 34-20', 'I go through these things way too fast. They serve these year-round, not just at Easter', 'View over the town from Bath Meadows', 'Bath Meadows', 'The Bath Abbey at night from across town', 'Basketball end of the season team dinner. Me and my coach Matt', 'Basketball end of the season team dinner. My teammates voted me for the Player’s Player award, pretty special for only being here a few months', 'Basketball end of the season team dinner', 'The international student crew getting together one last time with everyone in town', 'Bath Festival', 'Hitting the Bath to Bristol bike trail again', 'St Mary’s Church in the small town of Bitton, just off of the bike trail. Built circa 500, pretty incredible', 'St Mary’s Church in the small town of Bitton, just off of the bike trail. Built circa 500, pretty incredible', 'View of the city of Bath from Alexandra Park', 'View of the city of Bath from Alexandra Park', 'Big party at the Royal Crescent before Summer Ball', 'Big party at the Royal Crescent before Summer Ball. Me and some of my basketball teammates', 'My final trip from Bath Spa railway station, my gateway to the rest of the UK and Europe for the last few months');
+	
+	var stonehenge = '17 February <br/ ><br/ >' +
+	'I went with some of my exchange friends for the day to check out a couple of old rocks in a field. The museum and audio tour ' +
+	'gave a lot of the history behind the site and was really excited to see one of the oldest structures in the history of the world. ' +
+	'Probably the best English weather I’ve had too!';
+	
+	var stonehengeCaps = new Array('The Stonehenge Exhibit', 'The ancient Neolithic huts', 'The ancient Neolithic huts', 'The stones', 'The stones', 'The stones', 'The stones', 'The stones', 'The stones', 'The stones', 'The stones');
+	
+	var salisbury = '17 February <br/ ><br/ >' +
+	'Salisbury is the town nearest Stonehenge, and had a really cool small-town feel to it, kind of like Bath. The highlight was ' +
+	'definitely the Salisbury Cathedral, the tallest in all of England. Between the Hogwarts-esque courtyard and the walk through the chapel, ' +
+	'it had to be one of the most awesome churches I’ve seen. I found it amazing that during WWII enemy forces were even instructed not ' +
+	'to bomb the church, as it was their best point of reference from the air. <br/ ><br/ >' +
+	'We also had the chance to visit Old Sarem and its very run-down castle that gave a great view of the surrounding area. ';
+	
+	var salisburyCaps = new Array('The view from Old Sarem Castle', 'The view from Old Sarem Castle, that’s the Salisbury Cathedral off in the distance', 'Old Sarem', 'Old Sarem. Loved seeing all the dogs running around, especially the goldens and the black lab here to remind me of home', 'Salisbury Cathedral', 'Salisbury Cathedral', 'Salisbury Cathedral', 'Salisbury Cathedral', 'Salisbury Cathedral', 'Salisbury Cathedral. This area reminded me a lot of the courtyard from Hogwarts', 'The world’s oldest working clock inside Salisbury Cathedral', 'Salisbury Cathedral');
+	
+	var oxford = '18-19 February <br/ ><br/ >' +
+	'Oxford was a real easy trip from Bath: only about an hour and a half by train. Of course, the college is the trademark of the town, ' +
+	'and got the chance to see a few of the incredibly old buildings and residential colleges. One of these we paid to look through, Christ’s ' +
+	'Church, which is notable for being the filming location of the large dining room from Harry Potter. It definitely didn’t look the same ' +
+	'without floating candles around the room, but was still a really cool. To be a student at a place with so much history and attracting so ' +
+	'much tourism would be quite the feeling. <br/ ><br/ >' +
+	'Andy, one of my friends on exchange from New Zealand, had a list of the best bars/pubs of Oxford to visit in one of his travel books, ' +
+	'so I got to have a drink at the Bear Inn, the oldest pub in Oxford (established 1242!); the Eagle and Child, where CS Lewis and JRR ' +
+	'Tolkien used to convene; and the Turf Tavern, visited by Bill Clinton back in the day. <br/ ><br/ >' +
+	'Also had my first hostel experience! My travel companions and I hope they all aren’t like this one… <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Christ\'s Church College <br/ >' +
+	'Authentic English Pubs';
+	
+	var oxfordCaps = new Array('The Bodleian reading library', 'One of the many Oxford Colleges, Christ Church', 'Christ Church', 'Christ Church', 'The Christ Church Chapel', 'The Christ Church Chapel', 'The Christ Church Chapel', 'Christ Church', 'Christ Church', 'The Christ Church dining hall, better known as the Hogwarts Great Hall', 'The Christ Church dining hall, better known as the Hogwarts Great Hall', 'The Ashmolean Museum, found one of my ancestors', 'Oxford Castle');
+	
+	var cardiff = '11 February <br/ ><br/ >' +
+	'Cardiff was my first trip outside the country since arriving in England. Bath is not far from Wales, and a large ' +
+	'group of the exchange students and I took advantage of the short hour or so train ride to get to the nation’s capital ' +
+	'for the day. We may have picked the wrong weekend to visit, as the city was buzzing surrounding the Wales v England rugby match. ' +
+	'This did however make for a pretty cool cultural experience, seeing the city get excited for the game and make a lot of noise ' +
+	'around town. Would have been nice for Ryan to be along to see it! <br/ ><br/ >' +
+	'We visited Cardiff Castle, which kind of made me forget that I was in the middle of the city. It reminded me a little bit of all ' +
+	'the castles Dad would take us to back in Germany when I was really young. This was the first castle I visited in the UK, and I’m ' +
+	'sure won’t be the last. <br/ ><br/ >' +
+	'We also had a chance to see the harbor and one of the old coal factories turned into a museum, as well as the National Museum. ' +
+	'I was also really interested in the Welsh language, and was able to somewhat (successfully) learn the alphabet and phonetics. I’ll ' +
+	'definitely have to come back to keep working on it. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Cardiff Castle <br/ >' +
+	'Harbor and waterfront area';
+	
+	var cardiffCaps = new Array('Unfortunately my phone decided to delete most of my pictures I took while I was in Cardiff, so I only have a few to share here', 'Cardiff Castle', 'Cardiff Castle with Andy', 'Cardiff Castle', 'Cardiff Castle', 'Cardiff Castle with my new friends', 'The city was buzzing for the Wales v England rugby match', 'Found a good friend at the National Museum');
+	
+	var amsterdam = '8-11 March <br/ ><br/ >' +
+	'I took advantage of the cheap flights from nearby Bristol airport to head to Amsterdam for a few days. I went with five of my ' +
+	'mates (am I British yet?) and stayed at a hostel in the red light district, famous for its prostitution business and lax views ' +
+	'on drug use. Despite being slightly disturbed by some of the things I saw around the area we were staying, the city was amazing. ' +
+	'There were more canals then streets and more bicycles than people it seemed. We did a free walking tour and got to see a whole ' +
+	'lot of the city as well as learn its history. Amsterdam basically used to be a giant swamp, and the canals helped drain the area ' +
+	'so a city could be built, which was pretty incredible to me. <br /><br />' +
+	'We waited in the very long line to get into the Anne Frank house, which was well worth it. We also did “The Heineken Experience,” ' +
+	'which included a tour through the old factory in the middle of town, a 45 minute canal tour through the city, and a rooftop view ' +
+	'from the A’dam tower which featured a swing over side of the building. I went by myself to the Rijksmuseum and was blown away ' +
+	'by the variety of different things I found inside. I tried to take a lot of pictures. The famous “I Amsterdam” sign was also ' +
+	'outside the museum, and the surrounding park was really busy on a nice day. <br/ ><br/ >' + 
+	'My top recommendations: <br/ >' +
+	'Heineken Experience with brewery tour, canal tour, and A\'dam Tower <br/ >' +
+	'Rijksmuseum <br/ >' +
+	'Free Dam Walking Tours';
+	
+	var amsterdamCaps = new Array(" ", 'There are more canals than streets in Amsterdam it felt like, it made it very easy to feel lost', 'Oude Kerk right by our hostel in the center of the Red Light District', 'Oude Kerk', 'Oude Kerk', 'Canals everywhere', 'Canals everywhere', 'Also bikes everywhere, it felt like there were more bikes than people in the city'," "," ", 'I was wondering what these small ramps on the side of stairwells were all over the place for, but then realized they are for the bikes', 'Our tour guide told us a story: everyone in Amsterdam has a “bike junkie” on speed dial. Bikes are often stolen and locks clipped, so if you end up losing your bike after parking it somewhere your local junkie can get you one in no time. They usually have a stocked inventory, and if the junkie doesn’t have the bike of your request, he goes “shopping”'," "," "," ", 'The old post office (the most lavish one I’ve ever seen) now turned into a shopping center', 'The old town hall, now where the Dutch Royal Family resides', 'Old town hall', 'Old town hall', 'Our walking tour group. Shout out to Gianni for being an awesome guide!'," ", 'Anne Frank house'," ", 'These things are unreal. Haven’t seen them anywhere outside of the Netherlands but I need to get some asap'," ", 'The Rijksmuseum', 'The Rijksmuseum', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'The famous Van Gogh', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Rembrandt’s “Nightwatch,” definitely the most popular by a Dutch artist', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'The old town hall, now houses the Royal Family', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'Some highlights of my favorite art from the Rijksmuseum. I could have roamed around here all day', 'The backside of the Rijksmuseum and the famous “I Amsterdam” sign', 'Should have brought my basketball', 'This park was buzzing on a very nice day. Very cool', 'The old Heineken factory in the middle of the city. No brewing happens here anymore, but the inside got converted into a huge touring area and rooftop bar', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'The Heineken Experience', 'Next stop on the Heineken experience was a canal tour', 'Canal tour', 'Canal tour', 'Canal tour', 'The A’dam tower', 'The A’dam tower', 'View from the top of the A’dam tower', 'View from the top of the A’dam tower', 'View from the top of the A’dam tower', 'View from the top of the A’dam tower', 'The crew', 'The boys');
+
+	var cork = '15-18 March <br/ ><br/ >' +
+	'I somehow managed to find a cheap way to spend St Patrick’s Day in Ireland, something I was really hoping to do while over ' +
+	'here. It involved a long train up to Liverpool and forgoing a more expensive Dublin for Cork, but it had to be my favorite ' +
+	'place I have visited yet. Cork is the second biggest city in Ireland, but it still felt very small, not much bigger than ' +
+	'Bath. <br/ ><br/ >' +
+	'We reserved St Patrick’s Day for all of the festivities around town, so the day before we saw some sites. The Blarney Castle ' +
+	'was a short trip outside town, and was honestly the most beautiful place I have ever visited. There is obviously the castle, but ' +
+	'the rest of the grounds featured gardens, trails around a river, caves, waterfalls, and cattle and horse pastures. I could have ' +
+	'walked around the whole day there. I kissed the famous Blarney stone (see pictures), so fortune holds that I will be a lucky ' +
+	'man now. In the afternoon we went back through Cork and found a bus to the old Jameson Irish whiskey distillery in Midleton, ' +
+	'which was converted into a walking tour. Didn’t know much about the whiskey-making progress at all, but was very enlightened by ' +
+	'the tour and got to have some great whiskey as well. <br/ ><br/ >' +
+	'On Friday was St Patrick’s Day, and there was a lot going on around town. The parade happened in the afternoon and lasted about ' +
+	'two hours, and we checked out a few of the local pubs that were bustling with music and the horse races on TV. I definitely ' +
+	'lost a lot of sleep this weekend, but it was well worth it for all that I crammed into the few days I was here. I definitely hope ' +
+	'to return to check out Dublin and the rest of the country at some point while I’m here. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Blarney Castle <br/ >' +
+	'Jameson Distillery <br/ >' +
+	'Live music at one of the many pubs';
+	
+	var corkCaps = new Array('Every Irish beer is very dark, loved Guinness and Beamish, with Murphy’s probably being my favorite'," "," ", 'Blarney Castle grounds', 'Blarney Castle grounds. Kiss the stone, become a lucky man', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds. Not a fan of the scaffolding though', 'Blarney Castle grounds. Me and my main travelling mates', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds. Those don’t look like horses…', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds. Watch out for the Leprechauns', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds. I wonder who lives in here…', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds. That’s a long way down', 'Blarney Castle grounds. Classic Americans', 'Blarney Castle grounds', 'Finally getting to kiss the stone, if I can find it…', 'Might be easier to put my hand this way…'," ", 'Kissing the stone', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Blarney Castle grounds', 'Irish sausages and mash. Phenomenal', 'Jameson Whiskey Distillery', 'Jameson Whiskey Distillery', 'Jameson Whiskey Distillery', 'Jameson Whiskey Distillery. They took us through the old stills and storehouses. It is still very well kept together despite being unused since the 1970’s. It had a really cool feel to it', 'Jameson Whiskey Distillery', 'Jameson Whiskey Distillery', 'The main stills', 'What they use to mix the barley', 'Jameson Whiskey Distillery', 'Jameson Whiskey Distillery', 'Jameson Whiskey Distillery', 'Jameson Whiskey Distillery', 'Jameson Whiskey Distillery', 'The micro-distillery. Where the small-batch whiskey is made', 'A couple of leprechauns headed out to the parade (that’s my buddy Andy from Auckland)', 'The parade', 'The parade', 'The parade', 'The parade', 'My Irish companions'," ", 'The American jokes are inescapable, even in Ireland');
+	
+	var liverpool = '18 March <br/ ><br/ >' +
+	'We went through Liverpool to get to Cork, and on the way back we spent the day there after an early flight in. There isn’t ' +
+	'much in terms of tourism in Liverpool, but thanks to a couple of famous musicians in a band from the 60’s, there was a really ' +
+	'cool Beatles exhibit to see. Emmett was really jealous he missed out. In the afternoon, we planned to go to a football match at ' +
+	'Goodison Park, home of Everton, and were able to experience what the best soccer in the world is like first-hand as well as the ' +
+	'atmosphere. It wasn’t nearly as rowdy/dangerous as I had expected actually, and a 4-0 win made the experience even better.'
+	
+	var liverpoolCaps = new Array('There are about 4 different Beatles exhibits you can see in Liverpool it’s ridiculous. This one was most convenient for us to get to and also had the best reviews', 'George’s first guitar'," "," "," ", 'An original page from the band’s recording session setlist', 'Beatlemania', 'Sergeant Peppers', 'We all live in a yellow submarine', 'John’s glasses'," "," ", 'The final stop in the exhibit was a recreation of John’s recording site for the “Imagine Sessions.” Pretty cool'," ", 'Downtown Liverpool', 'Downtown Liverpool', 'The boys', 'Goodison Park. We got to see Everton beat Hull City 4-0', 'The view from our seats. It was slightly obstructed, but we benefitted from three of the four goals at our end, which was pretty sweet', 'Goodison Park', 'Goodison Park');
+	
+	var copenhagen = '22-24 March <br/ ><br/ >' +
+	'Copenhagen was absolutely incredible. It was one of the places recommended by friends back home to visit, but I don’t think I ' +
+	'would have made it there had I not had other friends already planning to go. I am very glad I did though. <br/ ><br/ >' +
+	'We rented bikes which was a major key to cut down on time and not get tired from walking around all day. This allowed us to see ' +
+	'basically everything we wanted to see in a single day. This included Christiansborg Palace and its tower, Amalienborg (The Royal ' +
+	'Palace), Borsen Stock Exchange, Nyhavn, The Marble Church, Christiania, the Little Mermaid Statue, the Kastellet Star Castle, ' +
+	'and the City Hall. We even found some trampolines in a park along the way that were a big hit (see pics/videos). It was a ' +
+	'very quiet city, which I really enjoyed and made it feel like a very livable city. We seemed to compare to a quieter ' +
+	'version of Amsterdam. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Nyhavn <br/ >' +
+	'Changing of the guard at Amalienborg <br/ >' +
+	'Rent bikes';
+	
+	var copenhagenCaps = new Array(" "," "," "," ", 'Christiansborg Palace', 'Christiansborg Palace', 'Christiansborg Palace', 'Christiansborg Palace', 'Christiansborg Palace', 'Christiansborg Palace', 'Christiansborg Palace. That’s a nicely cut hedge', 'Christiansborg Palace', 'Christiansborg Palace'," ", 'The garden at the Dansk Jodisk Museum', 'The garden at the Dansk Jodisk Museum', 'The garden at the Dansk Jodisk Museum', 'The garden at the Dansk Jodisk Museum', 'The garden at the Dansk Jodisk Museum'," "," ", 'Borsen Stock Exchange', 'Borsen Stock Exchange', 'Borsen Stock Exchange', 'Found a basketball court, doesn’t look like the Danish use it too much', 'Nyhavn', 'Nyhavn', 'Nyhavn. Probably my favorite picture I took from this trip', 'Nyhavn', 'Nyhavn', 'Nyhavn', 'Nyhavn', 'The view from the tower at Christiansborg', 'The view from the tower at Christiansborg', 'The view from the tower at Christiansborg', 'The view from the tower at Christiansborg', 'I wasn’t ready for this picture', 'Amaliensborg (The Royal Palace). It was laid out in a giant square area with surrounding buildings. This statue was in the middle', 'Changing of the guard at Amaliensborg', 'Changing of the guard at Amaliensborg', 'Changing of the guard at Amaliensborg', 'Changing of the guard at Amaliensborg', 'Changing of the guard at Amaliensborg', 'The Marble Church', 'The Marble Church', 'Christiania', 'Christiania', 'Christiania', 'Christiania', 'The Little Mermaid Statue. It is actually a very tiny statue', 'The Little Mermaid Statue', 'Eating duck and chips on the river, Christiania was full of food trucks'," ", 'Kastellet (The Star Castle). You can’t really tell in any of these pictures but this island was in the shape of a giant star. Some of the later pictures show a little better outline', 'Kastellet', 'Kastellet', 'Kastellet', 'Kastellet', 'The Church at Kastellet', 'The Church at Kastellet', 'Inside the Marble Church', 'Inside the Marble Church', 'Inside the Marble Church', 'These were the trampolines I had talked about. I felt like a little kid at the playground on these'," ", 'Radhuset (The City Hall)', 'Radhuset', 'Radhuset', 'Radhuset', 'Radhuset', 'Radhuset', 'Radhuset', 'Radhuset', 'Radhuset');
+	
+	var stockholm = '24-26 March <br/ ><br/ >' +
+	'Stockholm was also a place that I never really had on my list of places to visit, but since it was planned in the same weekend ' +
+	'as Copenhagen and was rather cheap, I decided to tag along with my travelling friends. It did not disappoint. When I was first ' +
+	'walking around it almost had the atmosphere of an American city which sort of threw me off, but this faded after exploring most ' +
+	'of the city. <br/ ><br/ >' +
+	'We saw Storkyrkan Cathedral, the changing of the guard at the Royal Palace, the Vasa Museum, Riddarholmskyrkan Church (that’s a ' +
+	'mouthful), Kungstradgarden, the royal armory, and a lot of statues of guys named Karl. About 15 Karls have ruled Sweden over the ' +
+	'last couple hundred years. We even saw a bit of snow on the ground and most of the river was completely iced over in late March. ' +
+	'I also got to have some of the world famous Swedish meatballs for lunch. <br/ ><br/ >' +
+	'The morning before we left, a few of us went out to Hellasgarden, a large outdoor complex not far from the city. We did the ' +
+	'authentic Swedish spa experience: sauna and then a dip in the icy lake. I had my reservations going in, but it was awesome to ' +
+	'experience and glad I did it. It was very relaxing. By the time we left, it was even about 60 degrees Fahrenheit which was ' +
+	'completely out of nowhere, and was far warmer than when we landed back in London. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Swedish spa experience <br/ >' +
+	'Storkyrkan <br/ >' +
+	'Vasa Museum';
+	
+	var stockholmCaps = new Array('An icy river even in late March. I must be in Scandinavia'," ", 'A huge pile of snow on the ground in late March. I must be in Scandinavia', 'Karl VII'," "," ", 'Riksdagshuset (House of Parliament)', 'The Royal Palace', 'Swedish guards definitely have the coolest dress of all guards I’ve seen', 'Riksdagshuset (House of Parliament)', 'The inside of Storkyrkan, a famous cathedral next to the Royal Palace. Quite the pulpit', 'Storkyrkan', 'Storkyrkan', 'Storkyrkan', 'Storkyrkan. This painting is so big I could barely fit it in the frame at this angle. It is called “The Last Judgment” and is apparently the largest in all of Sweden', 'Storkyrkan', 'Storkyrkan. This is where the royal family sits when they attend services', 'Storkyrkan', 'Storkyrkan', 'Storkyrkan', 'Storkyrkan from the outside. It is wedged up against another row of buildings so it is hard to take a picture of it without looking straight up', 'Riddarhuset, an old great hall for meetings of the royals', 'Riddarhuset', 'Riddarholmskyrkan Church', 'Riddarholmskyrkan Church', 'Riddarholmskyrkan Church'," "," ", 'Riddarholmskyrkan Church', 'Tyska kyrkan (German Church)', 'Colorful houses, not quite Nyhavn though', 'Storkyrkan'," ", 'Another Swedish guard of the Royal Palace', 'Royal Palace'," ", 'Royal Palace', 'Royal Palace with my mates', 'Royal Palace with my mates', 'Royal Palace', 'Royal Palace', 'Royal Palace', 'Changing of the guard at the Royal Palace', 'Changing of the guard at the Royal Palace', 'Changing of the guard at the Royal Palace'," "," ", 'A view of the city from up high', 'A view of the city from up high', 'A view of the city from up high', 'A view of the city from up high'," ", 'Thankful for my short hair on windy days'," ", 'Found a basketball court', 'World-famous Swedish meatballs', 'The Vasa ship in the Vasa Museum. This bad boy sank in the Stockholm harbor on its maiden voyage back in the seventeenth century. The pictures don’t really do the size of it much justice, it was huge', 'Vasa', 'The dive bell, aka the retro scuba suit', 'Vasa', 'Vasa', 'Vasa', 'Vasa'," "," ", 'This is Hellasgarden, a beautiful park outside the city where I did the Swedish spa experience: sauna and then a dip in the ice lake', 'Hellasgarden', 'Hellasgarden', 'Hellasgarden', 'Hellasgarden', 'Hellasgarden'); 
+	
+	var barcelona = '6-9 April <br/ ><br/ >' +
+	'Started off two weeks of spring break in Barcelona. Having taken so much Spanish throughout school and being excited to put it ' +
+	'to use, I was a bit disappointed when just about everyone I spoke to in Barcelona wanted to speak English first, and also how popular ' +
+	'the unique Catalan language was. <br/ ><br/ >' +
+	'The city was very unique. It was all very spread out; I have noticed that most European cities like to “build out” rather than ' +
+	'“build up” as American cities tend to do, so when we made it up to some of the better viewpoints outside the city we could see real far ' +
+	'in every direction. Some of the highlights included Las Ramblas, Sagrada Familia and Parc Guell and all the other unique Gaudi sites ' +
+	'around town, Montjuic, and the beaches at Barceloneta. We also caught an awesome sunset view from a high hill called Bunkers, one ' +
+	'of the best parts of our trip. The three days we were there seems to be a very good length as we got to see all of the different ' +
+	'sides to the city between the mountains and the architecture and the beach, and also got to do the right amount of just ' +
+	'exploring and finding cool less busy spots along the way. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Sagrada Familia (inside and outside) <br/ >' +
+	'Parc Guell <br/ >' +
+	'Bunkers at sunset';
+	
+	var barcelonaCaps = new Array('The waterfront area', 'The waterfront area', 'Nice reflection on the harbor'," "," "," ", 'That hill in the background is Montjuic, we would get there in the coming days'," ", 'A nice sunset on our first night in town', 'The hostel made some fantastic paella mariscos (seafood) one night. Definitely the best food I have had from a hostel anywhere', 'Barcelona Cathedral', 'Barcelona Cathedral', 'Barcelona Cathedral', 'The Arc de Triumfos', 'Palm trees lining the plaza with the Arc de Triumfos', 'Arc de Triumfos', 'Sagrada Familia, still under construction. The exhibit inside the cathedral said that its expected completion date is in 2025-2026', 'Sagrada Familia', 'Casa Battlo, by Gaudi', 'Casa Battlo', 'Casa Battlo'," ", 'Casa Mila, also by Gaudi', 'Casa Mila', 'These little mosaic bench gardens were all around the city, pretty nice'," ", 'Palau Robert. Didn’t know anything about it, but we had to stop since it had my name in it', 'Palau Robert'," "," ", 'These quiet square areas were all over the city and usually had a lot of outdoor restaurant seating throughout the area. Perfect spot to relax during a siesta'," ", 'Making our way out of town and up the hill towards Parc Guell', 'This road looked pretty cool from afar, it would bend down and then back up again even higher', 'Every view point we stopped at along our climb we thought was incredible, but as we kept getting higher it would continuously put the lower view points to shame'," "," "," ", 'Up on the hill is Tibidabo, we didn’t get a chance to make it up there put there is supposedly a pretty nice amusement park'," "," ", 'The climb up this specific hill was so unfriendly that they needed to install an escalator', 'Made it to Parc Guell', 'Outside Parc Guell', 'Parc Guell', 'Parc Guell', 'Parc Guell', 'Parc Guell', 'Parc Guell', 'Parc Guell', 'Parc Guell', 'Climbing higher', 'Quite the spot to have a little football match at', 'Climbing higher', 'Climbing higher', 'Climbing higher', 'Climbing higher', 'This was about as high as we made it. That other hill in this pic was Bunkers, we’d make it over here for the sunset after going into the park at Parc Guell', 'A nice view over the city and the Mediterranean', 'Parc Guell. Gaudi’s architecture is pretty unique with all of its curviness', 'Parc Guell', 'Parc Guell', 'Parc Guell', 'Parc Guell. Gaudi also loves mosaics', 'Parc Guell. Gaudi also loves mosaics', 'Parc Guell', 'Parc Guell', 'Parc Guell. Everyone waiting their turn to get the right picture', 'Parc Guell', 'Parc Guell with Andy', 'Parc Guell', 'Parc Guell', 'Parc Guell', 'Started hiking up towards Bunkers for the sunset view', 'Hiking up to Bunkers', 'Bunkers', 'Bunkers', 'Bunkers. Keeping it classy by drinking a 4 euro bottle of wine out of plastic cups', 'Bunkers', 'Bunkers. A pretty beautiful shot', 'Taking in the beauty', 'Found an empty basketball court on the way down. Saw plenty around the city, never with any games going on though!', 'Waterfront area', 'Hiking up Montjuic', 'Hiking up Montjuic. We opted against the flying gondola ride'," ", 'Not so sure why we didn’t book our room here…', 'The gondola coming in'," "," ", 'The harbor that was loaded with cruise ships', 'Waterfall in Parc de Montjuic', 'Waterfall in Parc de Montjuic'," "," "," ", 'The Montjuic Castle', 'The Montjuic Castle', 'The Montjuic Castle', 'The Montjuic Castle', 'The Montjuic Castle', 'The Montjuic Castle', 'Beautiful view from the Montjuic Castle', 'The Montjuic Castle with the mates', 'The Olympic Stadium from the 1992 games', 'The Olympic Stadium from the 1992 games', 'They had footprints of famous Spanish athletes all over the outside of the stadium. Found my man Pau', 'Back at the Sagrada Familia, this time to go inside', 'Sagrada Familia', 'Sagrada Familia', 'Sagrada Familia. Incredibly intricate walls', 'Sagrada Familia. Incredibly intricate walls', 'Inside the Sagrada Familia. These pictures don’t do its magnificence any justice. There were so many amazingly colorful windows that cast light all over', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia. A rainbow of colors', 'Inside the Sagrada Familia. A rainbow of colors', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia. Each pillar had the classic curvy design that Gaudi always used', 'Inside the Sagrada Familia. This is the smaller cathedral where they would hold most of the services, underneath the main level. You could see it by looking down a window underneath the large altar', 'Inside the Sagrada Familia', 'The Nicene Creed en espanol', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia', 'Inside the Sagrada Familia'," ", '“Iesus Nazarenus, Rex Iudaeorum”', 'The school that Gaudi built next to the cathedral where all of the children of the construction workers could learn', 'When Pilate saw that he was getting nowhere, but that instead an uproar was starting, he took water and washed his hands in front of the crowd. “I am innocent of this man\'s blood,” he said. “It is your responsibility!”', 'While Pilate was sitting on the judge\'s seat, his wife sent him this message: “Don\'t have anything to do with that innocent man, for I have suffered a great deal today in a dream because of him.”', 'Peter replied, “Man, I don\'t know what you\'re talking about!” Just as he was speaking, the rooster crowed.'," ", 'Barcelona Cathedral', 'Barcelona Cathedral', 'Barcelona Cathedral'," "," ", 'Down at Barceloneta Beach. Not quite swimming weather yet', 'Barceloneta Beach', 'Barceloneta Beach', 'Barceloneta Beach', 'A little footy on the beach', 'Found another bball court, still not very well used', 'Yacht club', 'Barceloneta Beach', 'Barceloneta Beach', 'Barceloneta Beach', 'Barceloneta Beach');
+	
+	var valencia = '9-12 April <br/ ><br/ >' +
+	'We caught the bus down the coast to Valencia, which had some pretty impressive views of the water and mountains together. My good ' +
+	'friend George from back in VA had studied here last semester, so he had some good recommendations. The first full day we had we ' +
+	'rented biked and went down to the beach. Valencia has a river through most of the city, except that the river isn’t there anymore. ' +
+	'So nowadays it is just a long trail and park area below the main level of the roads which we took to get down towards the water. ' +
+	'We picked a pretty nice day to be at the beach, and the water was pretty cold as it was still April. <br/ ><br/ >' +
+	'Our second full day we walked around the city, seeing things like the Central Market, the Town Hall, the now-retired bullring, ' +
+	'and several different castle towers that lined the outer rim of the city. It was nice as it was not a very touristy town, and was ' +
+	'very authentic and livable it seemed. I was able to put my Spanish to better use here as well as a result. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Biking through the river <br/ >' +
+	'Malvarrosa Beach <br/ >' +
+	'The bullring';
+	
+	var valenciaCaps = new Array('A nice balcony view from the hostel room', 'Kicked some kids off their jungle gym at the beach', 'Senor buckets', 'We rented bikes and rode through the river of Valencia, except there isn’t a river there anymore so it was just a long stretch of park area. It was really nice. In this stretch there was an opera house, art museum, and science museum, as well as some fountains'," "," "," "," ", 'A good looking bridge', 'Biked down to the harbor', 'Biked down to the harbor', 'Biked down to the harbor', 'Valencia Cathedral', 'Valencia Cathedral', 'Valencia Cathedral', 'Plaza de la Verge', 'Valencia Cathedral', 'Mercat Central. This place was pretty massive with people selling anything from fruit to half-living seafood to entire cow legs. These were some of the biggest eggs I have ever seen, hard to believe they actually came from a chicken', 'Mercat Central. I had vaguely remembered learning about “hornazo,” the Spanish stuffed Easter bread back in class in high school. We were here the week of Easter so we saw plenty around the market', 'Mercat Central', 'Plaza Ayuntamiento', 'Valencia Town Hall', 'Valencia Town Hall', 'Valencia Town Hall', 'Valencia Town Hall', 'View from the balcony at the Valencia Town Hall', 'Valencia Town Hall'," ", 'The bullring of Valencia. They no longer put on shows here anymore so they turned into an exhibition and museum', 'The bullring of Valencia', 'The bullring of Valencia', 'The bullring of Valencia', 'The bullring of Valencia', 'The bullring of Valencia. Putting on a little show', 'Looks like the wall has taken a bit of a beating from some horns', 'The bullring of Valencia', 'The bullring of Valencia. Where the matador gets prepared', 'The view from the wealthy ticket holders’ box', 'Valencia oranges are fantastic', 'The bullpen', 'The bullfighting museum', 'The bullfighting museum', 'The bullfighting museum', 'The bullfighting museum', 'An orange tree downtown'," ", 'The outer part of the city has several sets of castle towers that were used for protection back in the day'," ", 'Story time: this picture was taken moments before Andy accidentally locked the two of us in this room. Our friends had to use poor Spanish to convey to the man at the desk downstairs that we were indeed trapped, though he was insistent that we were not trying hard enough. After about 45 minutes, he finally hiked up the stairs with his keys and let us out. Never again ', 'Top of the towers', 'Top of the towers', 'Top of the towers', 'Top of the towers', 'The castle towers');
+
+	var madrid = '12-15 April <br/ ><br/ >' +
+	'Madrid had to be my favorite place we visited on our Spain/Italy spring break excursion, and probably only second to Ireland in ' +
+	'terms of places I have been throughout the semester. It definitely had the feel of a very big city, but between the many parks ' +
+	'and what seemed to be fewer residents around the time of Easter, it had a somewhat quiet feel to it. There were parts of the city ' +
+	'where it felt hard to imagine we were still in the biggest city in the country. <br/ ><br/ >' +
+	'Some of the highlights had to be the many parks throughout the city: Plaza de Espana, Templo de Debod, and Parque del Retiro. ' +
+	'Plaza Mayor and Puerta del Sol were pretty busy with people when we visited which was very cool, and we were able to unintentionally ' +
+	'catch some of the Holy Week processions at night. The Royal Palace was massive and had so many incredible rooms inside, I felt ' +
+	'pretty lost. Despite having a massive line out the door, Museo Nacional del Prado had so many cool pieces inside, and had to be one ' +
+	'of my favorite museums I have been to. <br/ ><br/ >' +
+	'The mountain town of Toledo was also really accessible by train, so we took a day trip to see that as well. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Museo Nacional del Prado <br/ >' +
+	'Plaza Mayor <br/ >' +
+	'Parque del Retiro';
+	
+	var madridCaps = new Array('Plaza de Espana on a beautiful day', 'Plaza de Espana on a beautiful day', 'Plaza de Espana', 'Plaza de Espana', 'Plaza de Espana', 'Templo de Debod', 'View from Templo de Debod', 'View from Templo de Debod, that’s the Royal Palace off to the left', 'Templo de Debod', 'Palacio Real (Royal Palace)', 'Palacio Real', 'Palacio Real', 'Outside Palacio Real', 'Palacio Real', 'Outside Palacio Real', 'Outside Palacio Real', 'Outside Palacio Real', 'Gardens outside Palacio Real', 'Catedral de la Almudena', 'Palacio Real', 'Palacio Real', 'Palacio Real', 'Catedral de la Almudena', 'Palacio Real', 'Palacio Real', 'Palacio Real', 'Palacio Real', 'Palacio Real', 'Palacio Real', 'Palacio Real', 'Palacio Real & Catedral de la Almudena', 'Inside Catedral de la Almudena', 'View of Palacio Real from the other side', 'Plaza Mayor', 'Plaza Mayor. Leicester City was in town for a Champions League with Atletico, and their fan base had pretty much taken over most of the plaza', 'Plaza Mayor', 'Puerta del Sol (“Door of the sun”)', 'Puerta del Sol', 'Puerta del Sol with one of the Holy Week parades passing through', 'Puerta del Sol', 'Puerta del Sol'," ", 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'The Royal Botanical Gardens', 'Parque del Retiro', 'Crystal Palace at Parque del Retiro', 'Crystal Palace at Parque del Retiro', 'Parque del Retiro. Lots of ducks and turtles', 'Parque del Retiro. Some turtles sunbathing', 'Parque del Retiro', 'Parque del Retiro', 'Parque del Retiro. Lots of people out in rowboats', 'Parque del Retiro. Lots of people out in rowboats', 'Parque del Retiro'," "," ", 'Some of my favorites from the Museo Nacional del Prado. One of the best museums I have been to', 'Some of my favorites from the Museo Nacional del Prado. One of the best museums I have been to', 'Some of my favorites from the Museo Nacional del Prado. One of the best museums I have been to', 'Some of my favorites from the Museo Nacional del Prado. One of the best museums I have been to', 'Some of my favorites from the Museo Nacional del Prado. This is Parque del Retiro where I was just at', 'Some of my favorites from the Museo Nacional del Prado. One of the best museums I have been to', 'Some of my favorites from the Museo Nacional del Prado. One of the best museums I have been to', 'San Jeronimo el Real', 'Parque del Retiro', 'The Madrid Train Station is also a turtle sanctuary, pretty cool', 'Madrid Train Station', 'Some more Holy Week events at Puerta del Sol on Good Friday', 'Good Friday parade', 'Good Friday parade', 'Good Friday parade');
+
+	var toledo = '14 April <br/ ><br/ >' +
+	'Toledo was an easy 30 minute train from Madrid, and we were able to see most of the town in just one afternoon. The entire old ' +
+	'portion of the city is built right at the bend in a river, and stretches high up over the valley. The streets were very up and down ' +
+	'as a result. <br/ ><br/ >' +
+	'The highlight had to be the Toledo Cathedral. It had some really incredible intricate architecture all over the inside. I also made ' +
+	'it to see several smaller cathedrals, a monastery, and the old royal palace that had been turned into a museum. Just walking ' +
+	'around the town and seeing all the different streets and buildings was pretty awesome too. The one downside was how incredibly ' +
+	'run down by tourists it was. We got off the train and it seemed we were sucked into a flock of people doing the same things ' +
+	'we were for the rest of the day. <br/ ><br/ >' + 
+	'We capped off the afternoon by walking up the other side of the valley to get a pretty great view down the river and off to ' +
+	'the countryside. The city was well worth the trip to visit. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Toledo Cathedral <br/ >' +
+	'Alcazar de Toledo <br/ >' +
+	'Mirador del Valle up on the other side of the river';
+	
+	var toledoCaps = new Array('This old town section of Toledo was built right at the bend in the river up on a high hill. The streets had a lot of varying terrain. The building with the towers is the Alcazar de Toledo, the former royal palace', 'A little fishing going on down in the river'," "," ", 'The city is situated in a really beautiful spot'," "," ", 'Crossing the bridge to get to the city', 'Crossing the bridge to get to the city', 'Plenty of good views from Toledo', 'Plenty of good views from Toledo', 'Plenty of good views from Toledo', 'Plenty of good views from Toledo', 'Museo de Santa Cruz'," ", 'Alcazar de Toledo', 'Looking across the river valley', 'Alcazar de Toledo'," "," ", 'Inside the Alcazar de Toledo. A large portion of it was turned into a military museum, and we could also still explore some of the old royal quarters. This is a courtyard up on the third level', 'Patio up at the Alcazar de Toledo', 'Patio up at the Alcazar de Toledo', 'Patio up at the Alcazar de Toledo', 'Toledo Cathedral', 'Entrance to the Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral. This is one of the many intricate designs on the wooden seats inside the gated altar area', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral. This room had all of the portraits of the archbishops of Toledo through the years. It was called the “Chapterhouse”', 'Toledo Cathedral. This room had all of the portraits of the archbishops of Toledo through the years. It was called the “Chapterhouse”', 'Toledo Cathedral', 'Toledo Cathedral', 'Toledo Cathedral'," ", 'Monasterio de San Juan. A nice orange tree in the middle', 'Monasterio de San Juan', 'Monasterio de San Juan', 'Monasterio de San Juan', 'Monasterio de San Juan', 'Monasterio de San Juan. Very intricate design on the ceiling', 'Cathedral de San Juan', 'Cathedral de San Juan'," ", 'Hiking up the side of the river opposite the town to get a nice view through the valley', 'Hiking up the side of the river opposite the town to get a nice view through the valley', 'Old Town Toledo and the river', 'Old Town Toledo and the river', 'A great view through the river valley'," "," ");
+
+	var rome = '15-18 April <br/ ><br/ >' +
+	'We thought that being in Rome and the Vatican over Easter might cause us some trouble and a lot of extra money, but flights into ' +
+	'the city the Saturday before Easter were far cheaper than anything during or after, so we got to join in on one of the biggest Easter' +
+	'celebrations in the world! On Sunday morning, we got out early, but really not early enough we thought, to go catch a glimpse of mass ' +
+	'at St. Peter’s in Vatican City where we might see the Pope himself. Arriving only an hour before the start, we somehow managed to ' +
+	'claim a spot standing in about the second row from the restricting gate. There were seats up closer than us that had to have been ' +
+	'reserved months in advance, but for the planning we put into it, we had to get the best option possible. A massive crowd ended up ' +
+	'filling in behind us throughout the morning. We also later realized that we were standing in Italy, looking into Vatican City across ' +
+	'the border. We even got to see the Pope drive by in his sleek white car before giving his address, waving to crowd as his outfit ' +
+	'swayed in the wind. Pretty surreal. We ended up standing there for about four hours throughout the day, it was awesome! <br/ ><br/ >' +
+	'We stayed at an awesome Airbnb just outside the city, and after making the walk into town the next day we saw the hugely popular ' +
+	'sites like the Colosseum, Palatine and the Roman Forum, Trevi Fountain, Spanish Steps, and the Pantheon, among so many other places ' +
+	'we just came across throughout our time there. The day we left, we spent the entire day back at the Vatican seeing the Museum and the ' +
+	'inside of the Basilica. After being closed the Sunday and Monday before, the lines for these places were absolutely ridiculous, and ' +
+	'we ended up standing around for about five hours of the day with all the other people probably doing the same itinerary as we were. ' +
+	'Despite picking a really busy time of year to visit, seeing the city was awesome, and I can understand why it is one of the must-see ' +
+	'places of the world. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'St. Peter’s Basilica (inside is free admission) <br/ >' +
+	'Palatine <br/ >' +
+	'Vatican Museum';
+
+	var romeCaps = new Array('We got into Rome the day before Easter and woke up early Sunday to try and find our way into the Vatican. We were met by quite a large crowd', 'St Peter’s', 'St Peter’s. We were redirected from the first gate we tried to go through, but regardless we still ended up being right up near the front of the standing section for the service. All those seats in front were reserved months in advance, but we had to have the next best option. Only a row or two of people standing between us and the gate', 'We also realized that we were standing in Italy, looking into the Vatican across the border', 'Easter mass at St Peter’s', 'Easter mass at St Peter’s', 'Easter mass at St Peter’s', 'The bishops starting to take their seats', 'That’s Pope Francis up on the balcony if you look really closely', 'This is the crowd behind me. Glad we got there when we did', 'Left mass and walked around, there’s St Peter’s in the background still', 'The River Tiber', 'Castel Sant’Angelo', 'Piazza Navona', 'Piazza Navona', 'Piazza Navona', 'Piazza Navona', 'Piazza Navona', 'The Pantheon', 'The Pantheon', 'The Pantheon', 'The Pantheon', 'The Pantheon', 'The Pantheon', 'The Pantheon', 'The Pantheon', 'Trevi Fountain. Absolutely swamped with tourists', 'Trevi Fountain', 'Trevi Fountain', 'The Spanish Steps. Also so crowded with people sitting on them that you could hardly see the stairs', 'The Spanish Steps', 'The Spanish Steps', 'The Spanish Steps'," ", 'Piazza del Popolo', 'Piazza del Popolo', 'Piazza del Popolo', 'Piazza del Popolo', 'Pincio Promenade. I really loved the trees with the really high branches with the clean looking top. They were all over the city', 'They sell (cheap) wine by the plastic container here, I have never seen this before', 'The remains of an aqueduct', 'Arch of Constantine outside the Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum. You can see the top level where some of the outer brick has come off', 'Colosseum', 'Colosseum. A tough climb up the steps', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Colosseum', 'Making our way over to Palatine', 'Palatine', 'Palatine', 'Palatine', 'Palatine', 'Palatine. Love the trees', 'Palatine', 'Palatine', 'Palatine with the Colosseum in the background', 'Palatine', 'The Colosseum from Palatine', 'Palatine', 'Some nice ivy-covered walls', 'The Roman Forum (what is left of it)', 'The Roman Forum', 'The Roman Forum', 'The Roman Forum', 'A line of statues at the Roman Forum', 'This guy has seen better days', 'The Roman Forum', 'The Roman Forum', 'The Roman Forum', 'The Roman Forum', 'The Roman Forum', 'The Roman Forum', 'The Roman Forum', 'The Roman Forum', 'The Roman Forum', 'Julius', 'Trajan’s Markets, a popular shopping destination during the second century'," ", 'Altare della Patria. They had a large tomb of the lost soldier and terrace', 'Altare della Patria', 'Altare della Patria', 'Altare della Patria', 'Altare della Patria', 'Altare della Patria', 'Altare della Patria', 'Campidoglio, a square designed by Michelangelo', 'Campidoglio', 'Campidoglio', 'A nice skyline view', 'Ducklings learning how to swim from their mum in this fountain', 'The terrace of the Vatican Museum. It was about a three hour wait for us to finally get in, but it was well worth it', 'An old Roman coffin', 'An old Roman coffin', 'Vatican Museum', 'The room of busts in the Vatican Museum', 'The room of busts in the Vatican Museum', 'The room of busts in the Vatican Museum', 'The room of busts in the Vatican Museum', 'Vatican Museum', 'Vatican Museum. This room was lined with some pretty impressive full-sized personal statues', 'View over the city from the Vatican Museum', 'Vatican Museum', 'Vatican Museum', 'Vatican Museum', 'Vatican Museum', 'Vatican Museum', 'Vatican Museum', 'The museum seemed to have a very distinct order that you would go through all the rooms in, and at one point we became locked in with the mass of people that we could only move one direction', 'Vatican Museum', 'Vatican Museum', 'Vatican Museum', 'Vatican Museum', 'The famous School of Athens', 'In between this picture and the last, we went through the Sistine Chapel, where photos weren’t allowed. The place was absolutely incredible. Every square inch of the ceiling had some intricacy to look at. Very impressive', 'Vatican Museum', 'Back at St. Peter’s, this time to go inside. All of the chairs from mass two days earlier were still out as well', 'The line to get into the Basilica stretched around the entirety of St. Peter’s Plaza. This one was moving much quicker though and it only took about an hour and a half to get inside', 'The line to get into the Basilica stretched around the entirety of St. Peter’s Plaza. This one was moving much quicker though and it only took about an hour and a half to get inside', 'An international border', 'Inside St. Peter’s Basilica. It was the most extraordinary house of worship I have ever been into. Not only was it massive and had plenty to walk through and see, but the ceilings, columns, and domes were all unreal', 'St. Peter’s Basilica', 'St. Peter’s Basilica', 'St. Peter’s Basilica', 'St. Peter’s Basilica', 'St. Peter’s Basilica', 'St. Peter’s Basilica', 'The names of every saint buried in the basilica, beginning with St. Peter himself', 'St. Peter’s Basilica', 'The dome', 'St. Peter’s Basilica', 'St. Peter’s Basilica', 'St. Peter’s Basilica', 'St. Peter’s Basilica', 'The view of the Plaza from the Basilica. Pope Francis would have been standing right about here days earlier', 'An impressive pulpit', 'This is St. Peter’s resting place in the center of the Basilica under the altar. Two sets of stairs leading down to its own little sanctuary. On the lower level, where most other tombs were, his was by far the grandest and the only one we couldn’t get close to', 'St. Peter’s Basilica', 'The balcony where Pope Francis gave his address from', 'St. Peter’s Basilica', 'Pretty slick outfits');
+
+	var florence = '18-20 April <br/ ><br/ >' +
+	'Florence was one of my parents’ top recommendations in Italy, and it was a much quieter town that had a lot of awesome things to ' +
+	'see around town. There is such a big art influence in this city from people like Michelangelo, and the Galleria dell’Academia had ' +
+	'a lot of his work there, including his famous sculpture of David. Another big staple of the city was Il Duomo, featuring a cathedral ' +
+	'with an impressive dome, a tower, and a baptistery. Lots of stairs to climb. It was very uniquely colorful. Piazzale Michelangelo ' +
+	'also gave and awesome view of the area and was a popular spot to watch the sunset. <br/ ><br/ >' +
+	'The Arno River runs through the city, which provided some really impressive views of the town and the distant mountains. I had some ' +
+	'of the best food of my life here too, between a very popular sandwich shop and all the gelato I ate. Even though we were nearing the ' +
+	'end of two-week Spain/Italy trip and feeling pretty exhausted, I was very impressed by this city and would definitely recommend it as ' +
+	'an authentic Italian city despite how swamped it can be with tourists. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'Il Duomo Cathedral, Tower, and Dome <br/ >' +
+	'Galleria dell’Academia <br/ >' +
+	'Walking along the Arno River';
+	
+	var florenceCaps = new Array('Galleria dell’Academia. Home to Michelangelo’s world-famous David', 'This is an unfinished sculpture. Pretty cool to put into perspective that all these awesome works of art start out as block of marble like this one', 'David. Everything about it is so incredibly realistic', 'Galleria dell’Academia', 'David', 'David', 'David', 'Galleria dell’Academia also had a very cool musical instruments exhibit', 'Galleria dell’Academia also had a very cool musical instruments exhibit', 'Galleria dell’Academia also had a very cool musical instruments exhibit', 'Galleria dell’Academia also had a very cool musical instruments exhibit', 'Galleria dell’Academia', 'The bust room in Galleria dell’Academia. That’s a lot of heads', 'Palazzo Vecchio', 'Palazzo Vecchio', 'The Arno River', 'The Arno River', 'The Arno River and Ponte Vecchio', 'Italians love their mopeds', 'The Arno River and Ponte Vecchio'," ", 'This bridge had 360 degrees of something awesome to look at. Loved the river coming from the mountains in the background', 'The crew', 'The Arno River and Ponte Vecchio', 'Ponte Vecchio. Lots of jewelry shops on this bridge', 'The Arno River', 'Il Duomo. Built in the thirteenth century with some very impressive colorful architecture. We got a ticket that got us into the museum, dome, tower, and baptistery', 'The tower', 'Il Duomo', 'Il Duomo', 'Il Duomo', 'The museum at Il Duomo', 'The museum at Il Duomo', 'The museum at Il Duomo', 'From the balcony at the museum', 'The museum at Il Duomo', 'Inside the baptistery. It was a smaller building outside the main entrance to the cathedral, and has some really impressive ceiling art', 'Baptistery', 'Inside the cathedral', 'Inside the cathedral', 'An archaeological museum under the cathedral', 'An archaeological museum under the cathedral', 'One of the probably ten large cups of gelato I ate throughout the week in Italy. Absolutely fantastic', 'Heading up into the main dome', 'The main dome', 'Stain glass of the main dome', 'Looking down from the rim of the dome', 'Looking down from the rim of the dome', 'Climbing up higher to the top of the dome', 'Top of the dome', 'Top of the dome', 'Top of the dome', 'Top of the dome', 'Looks like the dome needs a little bit of landscaping', 'Top of the dome', 'Inner rim of the dome', 'About to climb the tower now', 'Climbing up the tower', 'Climbing up the tower', 'Long way down', 'Top of the tower. I think we were higher up on top of the dome over there', 'Top of the tower', 'Top of the tower', 'Basilica of Santa Croce on the other side of town looks like a much smaller scale version of Il Duomo', 'Hiked up to Piazzale Michelangelo', 'Piazzale Michelangelo', 'Giardino Bardini', 'Giardino Bardini', 'Giardino Bardini', 'Giardino Bardini', 'Giardino Bardini', 'A nice little waterfall at Giardino Bardini', 'Pitti Palace and Giardino di Boboli', 'Pitti Palace and Giardino di Boboli', 'Pitti Palace and Giardino di Boboli', 'Pitti Palace and Giardino di Boboli', 'Pitti Palace and Giardino di Boboli', 'Pitti Palace and Giardino di Boboli', 'Several different museums at Pitti Palace. Love the dog in the sculpture');
+
+	var venice = '20-22 April <br/ ><br/ >' +
+	'By the time I made it to Venice and the end of my more than two week excursion, I was pretty exhausted. My experience in Venice thus ' +
+	'ended up being rather relaxed, mostly just exploring the city and canals. The hostel we were staying at was not on the main set of ' +
+	'islands that could be connected by bridges, so we took the taxi ferry all day from place to place, it was easier than I expected. It was ' +
+	'a very efficient system for a city with no other fast form of transportation. <br/ ><br/ >' +
+	'I got to see St Mark’s Square and the Cathedral, and the popular Bridge Rialto. I also spent a couple hours on the island of Murano, ' +
+	'famous for its glass-blowing trade, and the number of incredible pieces of art there was unreal. I even got to sit in on a live ' +
+	'demonstration in one of the furnaces, and saw two guys make a small vase and a couple flowers that would go on a chandelier. Every ' +
+	'shop around the island had a huge variety of different glass vases, plates, chandeliers, and animals, it was pretty remarkable. It was ' +
+	'a very quiet place too. <br/ ><br/ >' +
+	'Other than that, a lot of the time we just spent wandering around the dizzying streets and buildings built up against the canals. This ' +
+	'has to be one of the most unique cities in the world, and definitely was worth the visit. <br/ ><br/ >' +
+	'My top recommendations: <br/ >' +
+	'A live exhibition at Murano <br/ >' +
+	'St Mark’s Square and Cathedral <br/ >' +
+	'Rialto Bridge';
+	
+	var veniceCaps = new Array('A view from outside the hostel', 'Canals everywhere', 'Doge’s Palace', 'Doge’s Palace', 'St Mark’s Basilica', 'Torre dell’Orologio', 'Museo Correr', 'Museo Correr', 'Museo Correr', 'Museo Correr', 'Museo Correr', 'A view from Museo Correr across to St Mark’s. There was a university graduation ceremony going on here later in the day as well', 'Some highlights from Museo Correr', 'Some highlights from Museo Correr', 'Some highlights from Museo Correr', 'Some highlights from Museo Correr', 'The private-hire gondolas', 'Rialto Bridge', 'From Rialto Bridge', 'From Rialto Bridge', 'From Rialto Bridge', 'Caught the ferry over to Murano, where all of the glass-blowing is done', 'Murano', 'Murano', 'This stuff is absolutely amazing. There were so many of these shops selling all kinds of colored and textured glass. An authentic Murano glass sculpture, like the birds in this picture, might go for more than 1000 euros', 'We found a furnace that was holding free public exhibitions of the glass-making process', 'These two guys are working on a set of flowers to go on a chandelier and a small vase', 'While the glass is still hot from the furnace, he stretches out the stem', 'While the glass is still hot from the furnace, he stretches out the stem', 'Reheats it so that he can angle the flower and snip it off from the pole he is holding', 'This is the start of another flower for the chandelier. He has rolled the glass in some coloring and heated it, and now is using pliers to make each individual petal', 'This guy was making a vase', 'He just finished blowing down into the vase through the pole he is holding, and is placing a design into the side', 'He’ll snip it off the pole and let it cool slowly so that it doesn’t shatter from the quick change in temperature. They said it usually takes about 24 hours to fully cool', 'Crazy', 'A large sculpture in Murano', 'A large sculpture in Murano', 'Murano', 'Back in Venice traversing more canals', 'On the ferry', 'On the ferry', 'On the ferry', 'Coming into the Rialto Bridge on the ferry, dodging some gondolas', 'Coming into the Rialto Bridge on the ferry, dodging some gondolas');
+
+	var dartmoor = '30 April – 1 May <br/ ><br/ >'+
+	'Dartmoor is the main attraction of Devon, the area southwest of Somerset and Bath. I took a two hour train ride down to ' +
+	'Exeter, just northeast of the park, to rent a bike, and within an hour of riding I was within the beauty of Dartmoor. I must have picked ' +
+	'a bad two days to make my trip down there, as there were only a few hours out of each day when I would be on the road and not getting ' +
+	'pelted with rain. Then again, it would be hard to find a good time to make the trip in England, let’s be real. <br/ ><br/ >' +
+	'Dartmoor has a ton of really cool towns throughout the park, and I passed through the single-road towns of Moretonhampstead, Princetown, ' +
+	'Postbridge, and Cornwood along the way. I stayed mostly on the road, weaving up and down rolling hills, crossing rivers, and stopping ' +
+	'often along the way to take in the beauty. I stayed at a cozy hostel in the middle of nowhere, surrounded by sheep pastures. There were ' +
+	'tons of sheep and cattle around the park, some wild and some not, so it was not a surprise to come feet away from them along my ride ' +
+	'and also see them cross the street and hold up traffic. I was hoping to see some of the famous wild Dartmoor ponies, but the only horses ' +
+	'I saw were fenced in on farms. <br/ ><br/ >' +
+	'On the morning of my second day, Google Maps took me on a serious detour off-road that I was a bit hesitant about, but it led to an ' +
+	'awesome row of fields untouched by anything but the trail I was riding on. I saw just about nobody else while I was out there as well, ' +
+	'and took some time to hang at Fox Tor, one of the many tors throughout the park that make it unique. By the time I made it to Ivybridge ' +
+	'station at the end of my excursion, the 45 miles of riding and admittedly walking my bike up some seriously steep hills started to wear ' +
+	'on the legs. I slept well the next night back in Bath. <br/ ><br/ >' +
+	'The park was absolutely beautiful and a very easy trip from Bath. It fulfilled just about every picture in my mind of what English ' +
+	'countryside looks like, and the dismal weather further confirmed the image.';
+	
+	var dartmoorCaps = new Array('One of the many beautiful landscapes of Devon', 'There are a couple of cows’ heads poking up there to the right of the burn pile', 'One of the many beautiful landscapes of Devon', 'The facial expression I got from most animals I passed along my ride', 'Except for these sheep, they ran the other direction', 'Didn’t see any sheep actually lie on the road, but saw plenty just roaming the open fields and a couple cross the road to briefly hold up traffic', 'Beautiful', 'A couple of sheep roaming around', 'Beautiful', 'A nice valley off the side of the road', 'Great view for miles', 'What I looked at for about 45 miles on my bike', 'Up and down many hills along the way', 'The view from Fox Tor in the middle of a pretty non-existent path. 360 degrees of land untouched by man', 'Google maps took me on a nice little off-road trip through some rivers out into no man’s land. Only saw about two other people out and about for the few hours I was on the path', 'Yellow Gorse Bush was all over the park, pretty beautiful', 'Yellow Gorse Bush', 'Yellow Gorse Bush along a riverbank', 'Crossing a river. Those are some sheep in the field in the background', 'An eerie moss-covered trail I came upon', 'An eerie moss-covered trail I came upon', 'My trusty steed for my two days out in the park', 'Drive slow');
+
+	var llanberis = '4-5 May <br/ ><br/ >' +
+	'Coming back from Easter break travelling through mainland Europe, I felt a bit guilty for not seeing all of the beauty that the UK ' +
+	'holds, and planned a bit of an excursion through Snowdonia National Park, one of the most beautiful places in all of Wales. My train ' +
+	'from Bath to Bangor took a little more than five hours, and after bussing to the nearby Caernarfon to rent a bike I took off for the ' +
+	'national park to the south. None of the bike rides that I took from place to place were more than two or three hours, and I was able ' +
+	'to stop off a good bit to snap pictures and take some scenic hiking trails. <br/ ><br/ >' +
+	'Llanberis had to be the highlight of my time in Wales. It is a backpacker’s town, with many trails and routes up to the peak of Snowdon, ' +
+	'the highest point in Wales. Between the lakes in the valley and the sloping slate sides of the mountains, it had to be one of the most ' +
+	'picturesque places I have ever been. The entire time I was in Wales I had absolutely amazing weather as well. My hostel was out in ' +
+	'the middle of sheep pastures with great views of the valley. I got to see Dolbadarn Castle, the twin lakes in the town Llyn Peris and ' +
+	'Llyn Padarn, and I enjoyed cycling along a little waterfront trail. The town was not very busy, and seemed like a popular spot for ' +
+	'people driving through the park and stopping off for some hikes. It had an awesome feel to it. I would definitely consider going ' +
+	'back to Llanberis and exploring all that this part of the national park has to offer.';
+	
+	var llanberisCaps = new Array('Rented a bike from the nearby Caernfarfon and rode out of the city and into the national park', 'Rented a bike from the nearby Caernfarfon and rode out of the city and into the national park', 'Rented a bike from the nearby Caernfarfon and rode out of the city and into the national park', 'Rented a bike from the nearby Caernfarfon and rode out of the city and into the national park', 'Rented a bike from the nearby Caernfarfon and rode out of the city and into the national park', 'So many roadside lakes that were worth stopping at. My favorite part about my trip here had to be just taking in all the beauty from the road on my bike', 'Definitely the best view I have had from a hostel', 'Definitely the best view I have had from a hostel', 'LLyn Peris (I guess Llyn means lake in Welsh?) and Dolbadarn Castle in the background', 'Llyn Peris. This region is a large exporter of slate, and the banks of this lake was lined with huge pieces of it', 'Llyn Peris', 'Making my way to Dolbadarn Castle', 'Making my way to Dolbadarn Castle', 'Dolbadarn Castle', 'The view over Llyn Padarn and the town of Llanberis to the left', 'The view from Dolbadarn Castle', 'The view from Dolbadarn Castle', 'The castle itself was really nothing special by the standard of the British Isles, but it had some great views of this beautiful area', 'Waterfall', 'This railway can take you from the town of Llanberis all the way up to Snowdon Peak, the highest point in Wales. I saw it going by at an incredibly slow speed,  I must have hiked up to the peak faster than the train made it up to the top', 'Waterfall', 'Waterfall', 'Sheep pasture in the front yard of the hostel', 'Beautiful Llyn Padarn', 'Beautiful Llyn Padarn', 'With the sun setting behind me, it turned the mountains behind me a beautiful red', 'Packed up and cycling out of Llanberis', 'Packed up and cycling out of Llanberis. Here is another angle of Llyn Peris', 'Packed up and cycling out of Llanberis. Here is another angle of Llyn Peris', 'Packed up and cycling out of Llanberis. Here is another angle of Llyn Peris', 'One of the many beautiful mountainsides I encountered');
+
+	var benglog = '5-6 May <br/ ><br/ >' +
+	'After leaving Llanberis, I had quite an uphill trek to get to my next destination of Pont Pen-y-Benglog. After about an hour and a ' +
+	'half of riding/pushing my bike up the hill, I made to Pen-y-Pass, and from there it was a more appealing downhill the rest of the way. <br/ ><br/ >' +
+	'I made it to my hostel in Pont Pen-y-Benglog early afternoon, and after dropping my things I started my hike up the nearby mountain ' +
+	'Tryfan. Tryfan is distinguished by its particularly rugged peak, and after an easier trail for most of the way up, the final 45 minutes ' +
+	'or so was more of a climb. It was good fun. There were some pretty incredible views of the valley and the small town of Pont ' +
+	'Pen-y-Benglog, featuring some nice lakes. There was one large lake, Llyn Ogwen down in the main valley, but I also loved seeing some ' +
+	'of the smaller lakes higher in elevation like Llyn Bochlwyd (aka Lake Australia), and Llyn Idwal. It was cool because hiking up I didn’t ' +
+	'see them, but once I got high enough it was a nice serene space up in the mountains with the flat lake. <br/ ><br/ >' +
+	'At the peak of Tryfan, there are two rocks next to each other known as Adam and Eve, separated by about four feet and a massive drop ' +
+	'down the side of the mountain. Anyone who jumps from one rock to another is said to “inherit the gift of Tryfan,” whatever that means. ' +
+	'Against my mother’s pleas and the wicked gusts of wind roaring over the crest of the mountain, I decided to save it for next time. A ' +
+	'couple of guys performed the jump while I was up there, good for them. <br/ ><br/ >' +
+	'By the time the day was done, I was exhausted and managed falling asleep at around 9:00. I would be up early the next day for my ' +
+	'ride to Rhyd-Ddu and hike to peak of Snowdon.';
+
+	var benglogCaps = new Array('Cycling from Llanberis up to Pen-y-Pass so I can go around the mountain to my next stop in Pont Pen-y-Benglog. This had to be the most brutal stretch on the body. I had to take quite a few breaks', 'Cycling from Llanberis up to Pen-y-Pass so I can go around the mountain to my next stop in Pont Pen-y-Benglog. This had to be the most brutal stretch on the body. I had to take quite a few breaks', 'Cycling from Llanberis up to Pen-y-Pass so I can go around the mountain to my next stop in Pont Pen-y-Benglog. This had to be the most brutal stretch on the body. I had to take quite a few breaks', 'Cycling from Llanberis up to Pen-y-Pass so I can go around the mountain to my next stop in Pont Pen-y-Benglog. This had to be the most brutal stretch on the body. I had to take quite a few breaks', 'Finally made it up the awful uphill, looks like a nice downhill for a stretch here', 'I would take this road to the right down to Beddgelert the following day', 'Beauty', 'Beauty. This is Llynnau Mymbyr (I won’t try to pronounce that…) in the small town of Capel Curig', 'The small town of Capel Curig', 'Spotted Tryfan on the way into town. I would hike to the peak of this later in the day', 'Dropped my stuff at the hostel and began hiking up to the peak of the nearby Tryfan. It took about two and a half hours up to the top, stopping along the way', 'Climbing to the top of Tryfan with the beautiful Llyn Ogwen in the valley', 'Climbing to the top of Tryfan with the beautiful Llyn Ogwen in the valley', 'Climbing to the top of Tryfan', 'Climbing to the top of Tryfan', 'Climbing to the top of Tryfan. The rest of the way up would be this rugged rock', 'Climbing to the top of Tryfan. That near lake is Llyn Bochlwyd, also known as Lake Australia by the locals because of its shape', 'Climbing to the top of Tryfan', 'Climbing to the top of Tryfan. That’s a big drop', 'Climbing to the top of Tryfan', 'Made it to the peak', 'Made it to the peak', 'Made it to the peak. These rocks are called Adam and Eve. Anyone who jumps from one rock to the other “inherits the gift of Tryfan,” but should you fail quite the treacherous fall awaits in between the rocks. Against my mother’s pleas and the wicked gusts of wind roaring over the crest of the mountain, I did not participate. Next time', 'I had considered continuing my hike from Tryfan’s peak up the path to this second mountain, but the long day of biking/hiking was beginning to wear on me', 'There’s a guy sitting up on one of the Adam and Eve rocks. A few guys did make the jump between the two', 'Tryfan', 'Tryfan', 'Hiking down Tryfan', 'Hiking down Tryfan', 'The banks of Lake Australia', 'Lake Australia with the rugged Tryfan behind it', 'The view of the very small town Pont Pen-y-Benglog. If you look all the way down the valley you can see the Irish Sea', 'A nice waterfall running down the side of Tryfan', 'Woke up bright and early the next morning to start my ride to Rhyd-Ddu to hike to Snowdon’s peak. There’s a nice cloud hanging around Tryfan', 'Morning ride', 'Here I am at the bottom of Pen-y-Pass. The road in front of me is 45 minutes of gradual downhill into the town of Beddgelert. Absolutely stunning scenery along the way as well', 'Morning ride', 'Morning ride', 'Morning ride', 'Made it to the town of Rhyd-Ddu, about to begin the hike up to Snowdon');
+
+	var snowdon = '6 May <br/ ><br/ >' +
+	'Snowdon Mountain, despite being only 1000 meters high, is the highest point in all of Wales and the tallest in the United Kingdom outside ' +
+	'the Scottish Highlands. After leaving Pont Pen-y-Benglog at about 7 am, I cycled about two and half hours to get to the path to the ' +
+	'summit starting in the town of Rhyd-Ddu (pronounced “hreed-thee,” bet you wouldn’t have guessed that one). There are many different ' +
+	'trails to the top of Snowdon, with most starting in the nearby town of Pen-y-Pass, though I opted for one of the notably quieter routes ' +
+	'on the opposite side of the mountain. My ride from my hostel that morning to Rhyd-Ddu was perfect. After about an hour of relatively flat ' +
+	'road, I made to the bottom of Pen-y-Pass, and had a perfect view through the valley that would take me next through the town of Beddgelert. ' +
+	'This stretch was about 45 minutes of gradual downhill, a cyclist’s dream. Throw some stops at nearby lakes and rivers in and it was an ' +
+	'awesome descent. <br/ ><br/ >' +
+	'When I finally made it to start of the Rhyd-Ddu trail, there were plenty of other people making the hike, though after seeing how many ' +
+	'others merged in from other trails closer to the top, I definitely consider my trail to be one of the quieter ones. It took me about ' +
+	'three hours to make it the summit, occasionally stopping for pictures and sandwiches. The trail started by taking me up relatively wide ' +
+	'and easy paths, but turned into a mountainside narrow walk about halfway up, with only a narrow fence separating us from a pretty steep ' +
+	'grade. It turned from clear skies to walking through a cloud at about this point as well, and the rest of the way up it would be hard to ' +
+	'manage to see too far in front of me. The last thirty minutes had to be the toughest, as the path really narrowed with drops on both ' +
+	'sides, and wind whipping from both sides forced me to stay pretty low for most of the way. At the summit, there were a couple hundred ' +
+	'people, most huddling together trying to get a few minutes safe from the wind. It was so foggy and offered no view of anything in front ' +
+	'of me, and after looking at pictures online of the views on a clear day it made me a little upset. It was still probably the best ' +
+	'hike/climb I have done, and to say that I have been to the highest point in a country is pretty cool.';
+
+	var snowdonCaps = new Array('Time to abandon the bike and go the rest of the way on foot', 'Picturesque', 'When I first started the walk, I was able to see real clearly in every direction, but I soon started make my way up into the denser clouds', 'Llyn Cwellyn in the distance', 'Llyn Cwellyn in the distance, and all the way out to the Irish Sea way off'," ", 'A couple of sheep hogging the trail', 'A couple of sheep hogging the trail', 'Getting a little cloudy', 'Getting a little cloudy', 'Making it up really high now. A long fall of the side of this trail', 'This was the last pic I took before reaching the summit. The final twenty minutes had to be the toughest, with wind whipping over both sides of the mountain and the trail narrowing. It got so foggy that I would hear people coming down the mountain long before I saw them', 'Made it to the summit!', 'Made it to the summit!', 'A large group of people huddling around the summit. They had to be no more than thirty feet away from me but can still hardly see them. It was about freezing temperature at the top', '1085 meters up in the clouds', 'Making my way back down the Rhyd-Ddu Path', 'Making my way back down the Rhyd-Ddu Path. Lots of narrow paths right up against a large drop like this', 'Starting to get out of the clouds', 'Starting to get out of the clouds', 'Starting to get out of the clouds', 'Starting to get out of the clouds', 'Beautiful day', 'Back at the bottom', 'Back at the bottom');
+
+	var caernarfon = '6-7 May <br/ ><br/ >' +
+	'Caernarfon (pronounced “Kernarvin”) was the town where I started and ended my biking adventures through Snowdonia National Park. After a few days in the park, ' +
+	'I spent one night in town, getting to visit its large waterfront area and the famous Caernarfon Castle. I really enjoyed the town, it ' +
+	'is the “biggest” in the area but was very small and compact. I had a great few days of weather as well. <br/ ><br/ >' +
+	'The castle is the main attraction of the town, built in the thirteenth century and is the site of the investiture of the Prince of ' +
+	'Wales. It was incredibly well preserved, with many different halls and towers to explore. It had to be the best physical castle I have ' +
+	'visited given how long ago it was built and the condition it is in today. I only had one night in Caernarfon, but I absolutely fell in ' +
+	'love with the coziness of the town and its proximity to the beauty of Snowdonia. Looking back on my time here in northern Wales, I would ' +
+	'definitely consider doing everything all again with the same itinerary, I enjoyed it so much.';
+	
+	var caernarfonCaps = new Array('I picked a good weekend to be here, the carnival was in town. Only downside was that it kind of took away from the beauty of Caernarfon Castle, seen here behind the swings', 'The wide river', 'Waterfront area. The town used to have the large castle walls around most of the city, and some are still up as seen on the right', 'A wee harbor'," ", 'Good thinking', 'The old castle walls surrounding a part of the town'," ", 'Inside Caernarfon Castle. Here is the death hole, where boiling water and oil would be poured down on intruders', 'Inside Caernarfon Castle', 'This area was the old chapel within the castle', 'A medieval fireplace', 'Caernarfon Castle', 'The view from a castle tower over the water', 'Despite Blarney Castle in Ireland being my favorite castle for its overall scenery, Caernarfon Castle had to be the best physical castle I visited for how well it has been kept up over the years. It is hard to believe something so well-preserved like this was built in the thirteenth century', 'The center of town', 'Caernarfon Castle', 'Caernarfon Castle', 'Some more of the old castle walls surrounding the town', 'This is where the Investiture of the Prince of Wales happens. The castle had a large exhibition for the coronation of Prince Charles in 1969', 'The view of the harbor from the castle', 'Caernarfon Castle', 'Caernarfon Castle', 'Caernarfon Castle', 'Hiked up to a park to get a good view of the city and the mountains of Snowdonia National Park in the distance');
+
+	var holyhead = '7 May <br/ ><br/ >' +
+	'Holyhead, about an hour by train from where I had been around Snowdonia, was where my ferry left from to take me to Dublin. I got there a ' +
+	'bit early, so I got to wander around the town and the harbor on a beautiful day. The ferry was very nice; it had a large space for cars ' +
+	'on the lower decks and the passenger area was quite luxurious. I spent a good bit of time up on the deck, wind whipping everywhere as we ' +
+	'cruised across the Irish Sea. The trip took about two and a half hours total.';
+	
+	var holyheadCaps = new Array('Holyhead Harbor', 'Holyhead Harbor', 'Holyhead Harbor on a beautiful day', 'About to board the ferry', 'At first, I wondered why the cost of a two hour ferry was so expensive, but at least it was a pretty comfortable ride over', 'Out on the deck leaving Wales behind'," ", 'Ireland off in the distance', 'The name of our ship was fittingly the Jonathan Swift', 'Getting closer to Ireland', 'Howth Peninsula', 'Dublin', 'Poolbeg Lighthouse marking our arrival', 'Poolbeg Lighthouse marking our arrival', 'Made it to Ireland');
+
+	var dublin = '7-10 May<br/ ><br/ >' +
+	'After catching the ferry over from my awesome few days in Wales, I set aside a couple days at the beginning of my Irish excursion to  ' +
+	'see the capitol city. Dublin is not very large in terms of area, and I was able to see most of the things that I wanted to see in one ' +
+	'day. This included Trinity College and the Book of Kells, a circa eighth century collection of the gospels. The long room of the library ' +
+	'in the exhibition was quite spectacular as well, with all kinds of historic texts lining two levels of shelves. With the university ' +
+	'located right in the middle of the bustling city streets, I was amazed at how nice the quiet seclusion of some parts of campus was. ' +
+	'I moved on to see Merrion’s Square, St Stephen’s Green, the shops of the famous Grafton Street, Dublin Castle, Christ Church Cathedral, ' +
+	'and one of my favorites, St Patrick’s Cathedral. The inside was pretty spectacular, and St Patrick’s Park outside the cathedral was ' +
+	'filled on a rare sunny Irish day. I also made it to the Temple Bar area right outside my hostel, filled with live music pubs and ' +
+	'shopping, as well as O’Connell Street, another popular strip of shops and restaurants. <br/ ><br/ >' +
+	'On my second full day in Dublin, I explored some more smaller parks south of the city before catching a bus to Glendalough for the day, ' +
+	'a monastic site about an hour and half from the city. <br/ ><br/ >' +
+	'On my last day before catching my bus out west, I visited the massive Phoenix Park on the west end of town. It featured the Dublin Zoo, ' +
+	'the US Ambassador’s Residence, Aras an Uachtarain (the Irish President’s residence), the Wellington Monument, St Mary’s Hospital and ' +
+	'loads of fields fit for football, rugby, and hurling. I loved how diverse the park was and how many different things were going on ' +
+	'throughout it. The Guinness Storehouse was also a short walk from the park, which I also stopped at. The Guinness Brewery at St James ' +
+	'Gate has been turned into quite the large tourist attraction, with a historic look into the brand’s taste, advertising, and global ' +
+	'spread. <br/ ><br/ >' + 
+	'16-17 May <br/ ><br/ >' +
+	'I returned to Dublin at the end of my ten days in Dublin, only for a night before flying back to Bristol. I spent the evening back ' +
+	'at Phoenix Park, wandering around another large portion that I wasn’t able to see the first time, including the Magazine Fort and the ' +
+	'Papal Cross. The day of my flight, I walked out of the city to the north to Glasnevin Cemetery and the National Botanic Gardens, at the ' +
+	'recommendation of my past host in Waterford, Tom. Glasnevin was full of some incredible headstones and sanctuaries, some dating back to ' +
+	'the fifteenth century. <br/ ><br/ >' +
+	'Dublin was a lot of fun, but I felt that in terms of the city life of some other places I’ve been, it wasn’t one of my favorites. Also, ' +
+	'I think that all of the tourism and diversity of being a big city kind of took away from a bit of its Irish authenticity, especially ' +
+	'after seeing some more of the country. I far preferred the smaller towns I visited during my time here. <br/ ><br/ >'+
+	'My top recommendations: <br/ >' +
+	'Trinity College <br/ >' +
+	'St Patrick’s Cathedral <br/ >' +
+	'Phoenix Park';
+
+	var dublinCaps = new Array('The Campanile of Trinity College', 'The Campanile of Trinity College', 'Trinity College', 'Book of Kells Exhibition', 'The Long Room in the Book of Kells Exhibition. There are two levels of historic texts lining the walls as well as busts of many important scholars and philosophers', 'A staircase leading up to the upper level shelves', 'Shakespeare', 'Plato', 'Jonathan Swift', 'One of the caretakers was explaining that with the shelves there is no real sorting format other than the physical size of the book, with the largest books on the bottom shelves and the smaller on the upper shelves', 'The Brian Boru Harp, used as the model for the Irish Coat of Arms', 'Trinity College', 'Trinity College', 'Trinity College', 'Merrion Square', 'Merrion Square', 'St Stephen’s Green', 'St Stephen’s Green', 'A shot of St Ann’s Cathedral from Grafton Street', 'Dubh Linn Garden outside of Dublin Castle', 'Dubh Linn Garden and Dublin Castle in the background', 'Dublin Castle', 'Christ Church Cathedral', 'Christ Church Cathedral', 'Sitting in St Patrick’s Park looking at St Patrick’s Cathedral', 'St Patrick’s Park', 'St Patrick’s Cathedral', 'Jonathan Swift’s resting place', 'St Patrick’s Cathedral. Pretty awesome', 'St Patrick’s Cathedral', 'St Patrick’s Cathedral', 'St Patrick’s Cathedral', 'St Patrick’s Cathedral', 'St Patrick’s Cathedral', 'St Patrick’s Cathedral', 'I had to stop at THE Temple Bar for a Guinness. The 6.30 Euro per pint was only good to keep me for one though', 'Garden of Remembrance built for Irish lives lost in the world wars', 'Garden of Remembrance built for Irish lives lost in the world wars', 'Made a stop at the nearby Iveagh Gardens before catching my bus to Glendalough', 'Made a stop at the nearby Iveagh Gardens before catching my bus to Glendalough', 'Made a stop at the nearby Iveagh Gardens before catching my bus to Glendalough', 'View of the River Liffey from Ha’Penny Bridge right outside my hostel', 'Phoenix Park', 'Phoenix Park was a good way out of the main buzz of the city, and was absolutely massive. It dwarves London’s Hyde Park. It features the Wellington Monument (seen here), the Dublin Zoo, The US Ambassador’s residence, and the Irish President’s house', 'The Phoenix Park Monument', 'Aras an Uachtarain, the president’s Residence', 'The US Ambassador’s residence', 'Aras an Uachtarain', 'A race track in Phoenix Park', 'Wellington Monument. Looks like a smaller-scale Washington Monument', 'Wellington Monument', 'Went on a tour of the Guinness Storehouse at St James Gate, learning about the history of the brand', 'Guinness Storehouse', 'Guinness Storehouse', 'Guinness Storehouse', 'Guinness Storehouse', 'The Guinness advertising exhibit', 'The Guinness advertising exhibit', '“A woman needs a man like a fish needs a bicycle”', 'Guinness Storehouse', 'Got taught how to pour the perfect pint', 'View from the penthouse bar at the top level of the storehouse', 'Penthouse bar at the top level of the storehouse', '‘Merica', 'The start of my second wave in Dublin, back in town just for a night before my flight back to England. Back in the beautiful Phoenix Park', 'The beautiful Phoenix Park', 'View from the Magazine Fort in Phoenix Park with the Wellington Monument poking out in the distance', 'Magazine Fort in Phoenix Park', 'View over the city', 'Magazine Fort in Phoenix Park', 'A large herd of deer out in the open in the middle of the park. What?', 'Phoenix Park', 'Phoenix Park', 'The Papal Cross in Phoenix Park', 'Phoenix Park at sunset', 'Glasnevin Cemetery north of downtown Dublin. I read some old headstones dating back to the fifteenth century here', 'Glasnevin Cemetery', 'Glasnevin Cemetery', 'Glasnevin Cemetery', 'Glasnevin Cemetery', 'The National Botanic Gardens, right around the corner from Galsnevin', 'The National Botanic Gardens', 'The National Botanic Gardens', 'The National Botanic Gardens', 'The National Botanic Gardens', 'The National Botanic Gardens');
+
+	var glendalough = '9 May <br/ ><br/ >' +
+	'Glendalough is the famous Monastic Site of St Kevin, who would use the area as a retreat during his ministry in the sixth century. It ' +
+	'was only about an hour and a half by bus from downtown Dublin. It had some beautiful fields, as well as a cemetery featuring St Kevin’s ' +
+	'Church and the tall Round Tower, typical of Irish sites from the medieval period. There were also two beautiful large lakes, with ' +
+	'Glendalough Upper Lake being the site of the cave where St Kevin used to live. It is built into the side of the mountain right up against ' +
+	'the lake, so it is only reachable by boat, and the story goes that Kevin used to stand out in the water long enough with his arms spread ' +
+	'for birds to come and rest on his arms. There were lots of people out walking along the trails leading around these lakes and mountains. ' +
+	'It was an absolutely beautiful site on another absolutely beautiful day, and offered a nice few hours outside the city.';
+
+	var glendaloughCaps = new Array('Glendalough was the famous retreat of St Kevin during the sixth century', 'Beautifully situated. It reminded me of the rivers and lakes in the valleys of Snowdonia just a few days earlier', 'The Round Tower', 'Beautiful', 'St Kevin’s Church', 'St Kevin’s Church', 'The Round Tower', 'St Kevin’s Church and the Round Tower', 'Taking a walk down past the Glendalough Lower and Upper Lakes', 'Skipping some rocks on Upper Lake. Nice and calm', 'Glendalough Upper Lake', 'Glendalough Upper Lake. The cave that St Kevin would retreat to would have been on the mountain to the left of the lake here', 'Glendalough Lower Lake', 'A nice shot of the mountains', 'A pretty nice couple of hours here at Glendalough');
+
+	var galway = '10-12 May<br/ ><br/ >' +
+	'I absolutely loved Galway and the west of Ireland, it was beautiful and full of the authentic Irish culture I came looking for on my ' +
+	'trip here. Galway is the third largest city in Ireland, though it had quite a small feel to it and my tour guide noted that only about ' +
+	'75,000 people live there. Travelling alone for this two week period of time, I didn’t really have many friends to go out to eat, hear ' +
+	'music, etc, but my hostel was really interested in getting some community going between the guests. So one night there was a group ' +
+	'dinner and live music afterwards, and the other night there was a pub crawl, again with lots of live music. Galway is pretty popular for ' +
+	'its music scene, attracting a lot of artists to come busk around town and play in pubs. Everyone knows Ed Sheeran’s “Galway Girl” ' + 
+	'(although I quite prefer the Irish trad-tune original rendition), but what most people don’t know is that Ed actually used to come to ' +
+	'Galway as a teenage to play before his career took off. Pretty cool stuff. <br/ ><br/ >' +
+	'Most of the happenings in Galway are on Shop Street, a long walking stretch of pubs and musicians performing all over the place. It ' +
+	'leads down to the Latin Quarter, made popular by the large Latin population living in Galway. Some of the best music I heard was at ' +
+	'Taaffes Bar. Really only my close family knows this, but when I was little I used to love to sing songs by the Irish Tenors. I would ' +
+	'get all dressed up in a bow tie and perform for whoever would listen to me. I really don’t remember much of these concerts as I was ' +
+	'only four years old or so, but when the band in Taaffe’s played “Will ye go Lassie go”—probably the only and most distinct song by the ' +
+	'Tenors I remember singing as a kid—it gave me chills. My favorite part about Galway and all of the other places I visited was diving ' +
+	'into the culture through the music. Nothing quite like sitting in a pub listening to traditional music late into the night. Some other ' +
+	'awesome music was at The King’s Head Pub (which also featured some tap dancing) and Murphy’s Bar. <br/ ><br/ >' +
+	'I got to spend a good bit of time in Eyre Square around the corner from my hostel, which was again filled on some uncharacteristically ' +
+	'sunny days. The waterfront area along the harbor was also quite popular with the nice weather.';
+
+	var galwayCaps = new Array('The River Corrib emptying out into the Harbor. How long do you think this boat has been stuck here? ALSO: for any Ed Sheeran fans, I believe that those colored houses on the other side of the harbor are from the end of his Galway Girl music video', 'The River Corrib emptying out into the Harbor', 'The harbor on another rare Irish beautiful day', 'Lots of boats', 'Friars River', 'Friars River', 'Inside the Galway Cathedral', 'Inside the Galway Cathedral', 'Inside the Galway Cathedral', 'Galway Cathedral', 'The Latin Quarter right off of Shop Street. Loved this part of town for all of its busking and pubs', 'Live music at Taaffe’s Pub. Really only my close family knows this, but when I was little I used to love to sing songs by the Irish Tenors. I would get all dressed up in a bow tie and perform for whoever would listen to me. I really don’t remember much of these concerts as I was only four years old or so, but when the band here in Taaffe’s played “Will ye go Lassie go”—probably the only and most distinct song by the Tenors I remember singing as a kid—it gave me chills. Pretty cool');
+
+	var doolin = '12-13 May<br/ ><br/ >' +
+	'After Galway, I took a bus down the coast to the small fishing village of Doolin. Doolin itself does not have much to see, though it ' +
+	'is a popular destination with travelers for its proximity to the Cliffs of Moher and the Aran Islands. I got to my hostel and dropped ' +
+	'my things before starting on the trail from Doolin to the cliffs, which was only about four miles long. The path took me along cattle ' +
+	'pastures, budding flowers, and steep drops down to the ocean. It was absolutely beautiful and offered some incredible views of the ' +
+	'rugged sides up against the water. There was a large exhibition when I made it to the actual site of the Cliffs of Moher, though I ' +
+	'preferred the views from the trail leading up to it. I took a bit of an off-road route down to the base of the cliffs by the water, it ' +
+	'was pretty cool. There were also a lot of puffins along the sides of the cliffs; from where I looked down at them I couldn’t them too ' +
+	'well, but they would crowd together on many of the lower rocks. <br/ ><br/ >' +
+	'Doolin had a nice selection of pubs offering live music in the evening, which had to be my favorite part of Irish culture. Doolin Pier ' +
+	'also had some outstanding views of the sun setting over the Atlantic. It was my perfect picture of a quaint Irish town, and I really ' +
+	'enjoyed the quietude of it.';
+
+	var doolinCaps = new Array('Doolin is a nice small fishing village only a few miles from the Cliffs of Moher. Dropped my things at the hostel and beginning my walk to trail to the cliffs', 'Lots of cattle and horses in Doolin', 'The road to the right there leads down to the Doolin Pier', 'Starting my walk along the trail to the cliffs', 'Challenge accepted', 'Trail to the Cliffs of Moher', 'That island straight in the distance is the nearest of the three Aran Islands. Had I had a little more time in Doolin I may have visited, they are supposed to be quite beautiful  and no cars on the islands as well', 'Looking back at Doolin', 'Lots of beautiful flowers growing on the mountainside along this trail', 'Some mini cliffs', 'A nice secluded cave within the cliffs', 'A nice secluded cave within the cliffs'," "," "," ", 'There is a guy named Pat who gives walking tours along this trail and this is his flag. Doolin in the background', 'Getting closer to the big ones', 'Getting closer to the big ones'," "," ", 'Aran Islands', 'Can’t see too well, but those are puffins crowded on the rocks down there', 'Lots of puffins', 'The big ones'," ", 'Trail narrowing along the edge of the cliffs', 'A pretty serious rock slide'," ", 'Beautiful', 'O’Brien’s tower'," ", 'The trail that I took to get here from Doolin', 'I would go down that trail on the mountainside to the bottom of the cliffs', 'That mountain/island was taken over by the seagulls', 'Cattle field and the town of Liscannor in the distance'," ", 'Didn’t get a chance to walk down this stretch of the cliffs, but there is a lighthouse all the way at the end', 'From O’Brien’s Tower', 'From O’Brien’s Tower'," "," ", 'America somewhere off in the distance', 'The long trail back to Doolin', 'Slowly scaling down this trail to the base of the cliffs', 'Bottom of the cliffs', 'Bottom of the cliffs', 'Bottom of the cliffs', 'Bottom of the cliffs', 'All of these rocks were super smooth', 'All of these rocks were super smooth'," ", 'Views like these reminded me of Luke Skywalker’s private island from ‘The Force Awakens.’ Turns out the filming location was actually in Ireland, at a remote island called Skellig Michael, an old monastic site of the southwest coast', 'Looking out over the Aran Islands', 'A nice Guinness beef stew at McDermott’s', 'My kind of poster', 'Walking down to Doolin Pier for the sunset', 'Sunset from the rocks at Doolin Pier. I’ve only ever seen the sun come up over the Atlantic before', 'The Cliffs of Moher off in the distance', 'Beautiful', 'Hitting the road early, off to Waterford today with a couple stops along the way');
+
+	var bunratty = '13 May <br/ ><br/ >' +
+	'After leaving Doolin, I had a bus ticket to Waterford but decided to take some time to make a few stops along the way. The first was at ' +
+	'Bunratty Castle, just outside the city of Limerick. Not only was there a castle to see, but there was a whole recreated village straight ' +
+	'out of the eighteenth century as well, it was very well done. I also learned that you can organize a medieval diner within the grand hall ' +
+	'of the castle, reminding me a bit of the franchise Medieval Times in the States. The rest of the park had a bunch of cool cottages that ' +
+	'would have been owned by various classes of society, some farm animals, and a number of old shops that would still be used for gifts today. <br/ ><br/ >' +
+	'After seeing the castle, I had a bus change in Limerick not too far away. I only had about 45 minutes, though my dad told me that I had ' +
+	'to see the “Wild Geese Fountain” even if I had just a little bit of time. It was a bit out of the way of the bus station, but when I got ' +
+	'there it was cool to see my grandfather, Robert Edward Fox’s name on the fountain. He and my grandma had given money to refurbish the ' +
+	'fountain a number of years ago and had in turn received a place on the plaque on the fountain. Pretty cool stuff. Other than that, my ' +
+	'stop in Limerick was brief, and I would catch my next bus the rest of the way to Waterford.';
+	
+	var bunrattyCaps = new Array('Bunratty Castle', 'A couple of goats inside the castle park threw me off a bit when I first entered', 'Bunratty Castle', 'You can buy tickets to eat dinner in this medieval style hall inside the castle', 'The castle dungeon', 'A bedroom within the castle', 'A medieval crapper', 'The drawbridge controls'," ", 'Grand hall', 'Grand hall'," "," ", 'A nice view of the Ralty River', 'This was the living quarters for guests within the castle. Would have been nice to know the residents', 'Lots of winding staircases', 'The folk park section of the castle grounds had a lot of these old cottages that families would live. The thatch roves were quite popular', 'Had to double take, but that is a loose rooster roaming around inside this cottage', 'The tea rooms', 'The tea rooms', 'Some cozy little fires inside the cottages', 'The school room', 'Didn’t realize there was a need to differentiate like this in class', 'Didn’t realize there was a need to differentiate like this in class', 'The pawn shop', 'The old pub', 'The Bunratty House', 'Some nice gardens', 'A nice wee church', 'The water mill house', 'A family’s livestock would live inside the house in this cottage', 'I placed my bag on the stone fence here to take a picture and this guy thought I was going to feed him. Sorry', 'This is the wild geese statue in Limerick, where I stopped in between buses. It isn’t really a major attraction or something I would have gone all out of my way to visit, except…', '…that my grandfather’s family made contributions to its refurbishment and got their names in the plaque on the fountain. Pretty cool', 'Wild Geese Statue', 'Wild Geese Statue and the River Shannon');
+ 
+	var waterford = '13-15 May <br/ ><br/ >' +
+	'After a day of travel from the west coast with some stops along the way, I made it to my first hostel in the small town of Mooncoin, ' +
+	'about twenty minutes outside of Waterford. It was called Tom’s Country Cottage and Tom, my host, used to be a tour guide all over the ' +
+	'country and had some excellent suggestions for things to see. He says that most people who come to stay have cars and are a little more ' +
+	'flexible with where they can go, but he had some good things for me to see when I stopped in Kilkenny and Dublin on the remainder of ' +
+	'my trip. Mooncoin was a small one road town with not too much to see, but when I made it into downtown Waterford the following day ' +
+	'there was a lot more to do. <br/ ><br/ >' +
+	'Waterford is the oldest city in Ireland, and was first inhabited by the Vikings in the tenth century. Thus, there was a lot of history ' +
+	'to the town, and sites like Reginald’s Tower, the Medieval Museum, and Bishop’s Palace told the story of Waterford since it was first ' +
+	'settled. Waterford is also quite popular for its crystal making, and the House of Waterford Crystal had some incredible pieces of art ' +
+	'for sale. It almost gave Murano in Venice a run for its money. I told myself that someday I might be able to shop at a place like that…';
+
+	var waterfordCaps = new Array('The road to my hostel in the quiet town of Mooncoin outside of Waterford', 'The Waterford Crystal shop. Some ridiculous pieces of art', 'Maybe one day I’ll have the budget to buy some of this stuff', 'Maybe one day I’ll have the budget to buy some of this stuff', 'The Irish Open Trophy', 'Looks to me like the old BCS crystal trophy, but it’s actually the Irish college football trophy', 'The Medieval Museum had a bunch of great stuff. Waterford was populated by the Vikings starting in the tenth century and has a whole lot of history', 'Didn’t realize my buddy Sean Eagen back in Virginia was an artist!', 'Hurling', 'The Medieval Museum', 'The Waterford Coat of Arms in the Medieval Museum', 'A model of what the town looked like when the Vikings inhabited it', 'The Great Parchment Book of Waterford', 'Bishop’s Palace Museum', 'Bishop’s Palace Museum', 'Bishop’s Palace Museum. This statue is made completely out of shells, very impressive', 'Bishop’s Palace Museum. This statue is made completely out of shells, very impressive', 'The River Suir', 'The River Suir', 'The Waterford Clock Tower');
+
+	var kilkenny = '15-16 May <br/ ><br/ >' +
+	'Kilkenny was the perfect-sized town in my opinion, as there was enough to see to keep me busy but was small enough to feel the authentic ' +
+	'culture and not run down by people. I started by seeing St Canice’s Cathedral right around the corner from my hostel, which featured ' +
+	'quite the impressive interior and a round tower built in the thirteenth century which I climbed 121 steps to the top to see some great ' +
+	'views of the town. I checked out Black Abbey, Rothe House, and the Smithwick’s Experience, a brewery tour. Smithwick’s is really only ' +
+	'popular in Ireland, but its export brew ‘Kilkenny’ has had some success around the world. They make a unique red ale, somewhere ' +
+	'between a lager and a stout (I got to learn all of the process behind this and how it differs on the tour). I also caught some great ' +
+	'live music at Cleere’s Pub, which lasted from nine until about one in the morning. It was not very packed, and without a sound system ' +
+	'the quieter music from the band gave off a really cool atmosphere in the dark pub. <br/ ><br/ >' +
+	'The day I left, I visited Kilkenny Castle, which is situated right on the River Nore and has some great collections of art throughout ' +
+	'the halls and large gallery. It was occupied more recently than any of the other castles I have visited, so it had a much more modern ' +
+	'and lavish feel to it. Kilkenny had to be one of my favorite Irish towns, as it was small enough for my liking but still had plenty to ' +
+	'see. It had some great food and strips of shopping as well. I would return to Dublin for one more night after this before flying back ' +
+	'home to Bristol.';
+	
+	var kilkennyCaps = new Array('St Canice’s Cathedral', 'Climbing the round tower at St Canice’s. 121 steps up to the top, with about seven different platforms where the ladder changes direction', 'Climbing the round tower at St Canice’s. 121 steps up to the top, with about seven different platforms where the ladder changes direction', 'The view of Kilkenny from the top of the round tower', 'Aerial view of St Canice’s Cathedral', 'The view of Kilkenny from the top of the round tower', 'St Canice’s Cathedral', 'St Canice’s Cathedral', 'St Canice’s Cathedral', 'St Canice’s Cathedral', 'St Canice’s Cathedral', 'The Black Abbey', 'The Black Abbey', 'Rothe House', 'Some weavings in process at the Rothe House', 'Rothe House', 'A very old well at Rothe House', 'Rothe Gardens', 'The River Nore and Kilkenny Castle in the background to the right', 'A hurling statue', 'Smithwick’s Brewery tour', 'Smithwick’s Brewery tour', 'Smithwick’s Brewery tour. A Harry Potter-like moving painting room', 'Smithwick’s Brewery tour', 'Smithwick’s Brewery tour', 'Smithwick’s Brewery tour', 'Getting a sample of the different tastes of Smithwick’s at the end of the tour', 'Getting a sample of the different tastes of Smithwick’s at the end of the tour. Pale Ale, Red Ale, and Blonde Ale from left to right', 'Smithwick’s Brewery Tour', 'Smithwick’s Brewery Tour', 'Live music at Cleere’s well into the night. Loved it', 'The River Nore', 'The River Nore', 'Kilkenny Castle grounds', 'Kilkenny Castle grounds', 'Kilkenny Castle', 'Kilkenny Castle', 'Kilkenny Castle. Quite lavish', 'Kilkenny Castle', 'Kilkenny Castle', 'Kilkenny Castle', 'Kilkenny Castle', 'Kilkenny Castle', 'Moorish stairway in Kilkenny Castle', 'Main Gallery in Kilkenny Castle', 'Kilkenny Castle', 'River Nore from Kilkenny Castle', 'Kilkenny Castle', 'Kilkenny Castle', 'River Nore');
+
+	var gloucester = '29 May <br/ ><br/ >' +
+	'Once a year on the May Bank Holiday, Brockworth, Gloucestershire becomes the busiest that it is all year. The reason for such mass ' +
+	'pilgrimage to the small town and the nearby Cotswolds Area of Natural Beauty is the annual Cheese Rolling Festival at Cooper’s Hill. ' +
+	'For those of you unfamiliar, Brockworth makes some very good cheese, and for the last 200 years this annual get-together features elite ' +
+	'athletes chasing a wheel of Brockworth’s best cheese down the steep Cooper’s Hill. Steep as in twice as high as it long, with various ' +
+	'mounds and mudslide on the rainy English day that it was for this year’s festival. My friend Anthony and I attended in hopes of ' +
+	'actually participating, though well aware of the masses that would come from around the world for the same reason as us. Based on ' +
+	'some of the conversations and accents that I heard, people from Australia, Mexico, Germany and all over were in attendance, some ' +
+	'exclusively for the rolling of the cheese. <br/ ><br/ >' +
+	'They rolled four wheels of cheese down the hill throughout the day: three men’s races and a women’s race. The way it worked was that ' +
+	'if you wanted to participate, you would show up at the top of the hill and 25 runners would be permitted for each race. I waited ' +
+	'around for the first few races, and managed to lock up one of the final spots in the last race of the day, it was pretty unbelievable. ' +
+	'I had watched and studied the various strategies employed by past runners, and figured that if I didn’t let my weight fall too far ' +
+	'forward, I could get down the hill quickly enough on my feet and avoid tumbling and potential injury. However, if you want to be the ' +
+	'first one to the bottom and claim the cheese, you need to be a little more willing to put your body on the line. I started off a little ' +
+	'too slow for my liking, and as a result spent about half of the time on my ass and the rest stumbling and tripping over the side of the ' +
+	'hill. I finished in the bottom half of the runners, though far from dead last. If you go to 3:16 of this YouTube video you can see me in ' +
+	'the black t-shirt and jeans on the left side: www.youtube.com/watch?v=pK1j06Gjp94.  All three of the men’s races were won by local ' +
+	'Brockworth legend Chris Anderson, bringing his career cheese total to 20! He won his first at age 17 and has been coming back for the ' +
+	'last 13 years to defend his dairy. <br/ ><br/ >' + 
+	'The atmosphere of the event was absolutely awesome. I think it’s hilarious that such a ridiculous event can bring out such a large crowd. ' +
+	'People must just love seeing other people tumble and roll at high speeds. If I had to guess I would say that there were close to 2000 ' +
+	'or 3000 people in attendance, it was ridiculous. Also, the event has been historically condemned by the local government for past ' +
+	'injuries (concussions and sprained ankles are typical), so it is entirely volunteer-run. The guys standing at the top of the hill letting ' +
+	'people race were cracking beers all day and only added to the casual atmosphere of the event, I loved it. The part of the day that will ' +
+	'stick out to me the most has to be the preparation for each race. Once everyone was lined up to run, the master of ceremonies would ' +
+	'yell: “One to be ready! Two to be steady! Three for the Cheese!” (and the cheese would roll…), and then “Four to go!” Probably one of the ' +
+	'most unique things I have done, and now I can say I participated in the world-renown spectacle that is the Cheese Rolling at Cooper’s Hill.';
+
+	var gloucesterCaps = new Array('We had a bit of a walk to get to Cooper’s Hill after getting off the bus, and we fell in line with the masses going through Cotswolds Area of Natural Beauty', 'That’s the queue of people up ahead', 'I don’t know if I have a very accurate estimate for how many people actually showed up for the festival, but it felt like it was in the range of 2000-3000', 'Making our way to the hill', 'Beautiful place, it would be a shame if a bunch of people trashed it chasing dairy products', 'That’s Cooper’s Hill. It may not look terribly steep from here, but looking down from the top almost made me second-guess participating. Also, there is a massive crowd of people here already even before the first wheel of cheese has been rolled', 'The view from the top of Cooper’s Hill. Absolutely mad', 'Quite a few characters showed up to chase the cheese. T-Rex had to by personal favorite, he ran alongside me in the same race', 'There I am in the black tee shirt getting ready to go', 'Post-chasing the cheese. The hill has turned into a mudslide by the end of the afternoon', 'Chris Anderson, the living legend. This guy won all three of the men’s races of the day (including the final one that I ran in), bringing his career cheese total to 20. 20! He won his first one when he was 17 and has been coming back for the last 13 years. He is also a Brockworth local, keeping the cheese in its hometown'," ", 'Muddy', 'Me and my mate Anthony from Illinois having just participated in the world-renown spectacle that is the Cheese Rolling at Cooper’s Hill');
+
+	var cambridge = '6-7 June <br/ ><br/ >' +
+	'After packing everything up from Bath, I had a couple days of travel before flying home a few days later. I made it into London for one ' +
+	'night, and then took a bus out to Cambridge, a pretty easy two hour ride. It was a pretty awful day weather-wise, which sort of limited ' +
+	'all of the exploring that I wanted to do, but I thought that I saw the University pretty well. The many colleges are spread out all over ' +
+	'the town, with some of the notable ones being King’s, Trinity, and St John’s College. With exams going on, some of the scenic areas of ' +
+	'the colleges were closed off to the public, though I was able to go inside King’s College Chapel, which is quite spectacular. The ' +
+	'stained glass art was beautiful and covered most of the walls within the Chapel. Henry II originally had the Chapel built, and over the ' +
+	'years it passed through his family, and a lot of the architecture and art inside was given to the royal family. <br /><br/ >' +
+	'Cambridge is big for punting, or gondolas, and had it been a better day I wanted to take a punting tour through some of the colleges ' +
+	'and the city, it had been a recommendation I received. It was a very similar city to Oxford in my opinion, where the university is really ' +
+	'the attraction of the town and had the same feel because of the age of all the buildings.';
+
+	var cambridgeCaps = new Array('Christ’s Pieces in Cambridge, rumored to be the place where football originated', 'Inside King’s College Chapel. Pretty impressive stained glass on all the walls', 'King’s College Chapel', 'King’s College Chapel', 'King’s College Chapel', 'King’s College Chapel', 'King’s College Chapel', 'King’s College Chapel', 'King’s College Chapel', 'King’s College Chapel', 'King’s College Chapel', 'This middle section of the chapel was give by Henry VIII, very intricate woodworking', 'King’s College was closed off because students had exams, but this is a nice shot of the central green of the college', 'Clare College', 'Standing on a bridge of the River Cam in Cambridge. Some punting boats parked up, not many out on such an awful day');
+
+	var dover = '7-8 June <br/ ><br/ >' +
+	'From Cambridge I went back through London to get down to the southeast coast and Dover. It is a beautiful part of the country, with a ' +
+	'lot of history surrounding the two world wars. The town itself was not in the best shape, but the famous white cliffs and Dover Castle ' +
+	'were incredible. When I got in I took a walk along the cliffs on a really windy but sunny day. They provided some beautiful views of ' +
+	'the surrounding country and even a glimpse of France across the English Channel as it was a pretty clear day. <br/ ><br/ >' +
+	'Dover Castle was also really incredible. During both world wars it served as an important fortress as it was the closest path from ' +
+	'Britain to mainland Europe, and had a very influential role in sending rescue missions to the nearby Dunkirk in WWII, rescuing more ' +
+	'than 350,000 soldiers when the Nazis were closing in. There were some pretty spectacular tunnels, originally built back in the ' +
+	'eighteenth century in response to a potential attack from Napoleon Bonaparte, but got the most use during WWII. Aside from the large war ' +
+	'history the castle grounds had, the medieval side of the castle had a ton of different underground passages and hidden entrances. The ' +
+	'castle itself was definitely one of the better ones I have visited, as it was pretty well-preserved and had some nice halls and staircases ' +
+	'inside. <br/ ><br/ >' +
+	'Dover was a very beautiful place, and I can see why it is a large summer destination. Even though it was June, I still find it hard to ' +
+	'believe that the beaches of the British Isles get any use.';
+
+	var doverCaps = new Array('The beautiful White Cliffs of Dover by the ferry port', 'The Dover ferry port. Lots of big trucks rolling off the freighters coming in', 'Taking a walk along the cliffside', 'Taking a walk along the cliffside', 'Taking a walk along the cliffside', 'Some wild ponies grazing the field along the trail I was walking', 'Some wild ponies grazing the field along the trail I was walking', 'The White Cliffs. Beautiful day as well', 'The White Cliffs. Beautiful day as well', 'A lighthouse about 3 kilometers from Dover. A nice view of the channel', 'Picturesque', 'Picturesque', 'Picturesque'," "," ", 'The white cliffs closer to town', 'A big gully along the cliffs', 'Some Brexit art in downtown Dover', 'Dover Castle looking over the town', 'The waterfront and its pebble beach with Dover Castle and the cliffs in the distance', 'View of the harbor from Dover Castle', 'The telephone room at Dover Castle. This castle was one of my favorites because it had its medieval history as well as a profound role in both world wars, and had some awesome bunkers and living quarters to look through', 'Flag translations', 'The officers’ living quarters during the wars', 'The castle', 'The grand hall of the castle', 'A nice wee chapel within the castle', 'A medieval well. I dropped a coin down and it took about 6 seconds for it to hit bottom, this is pretty deep', 'The top of the castle. The place was dominated by an enormous group of French students on a field trip which was a bit obnoxious'," ", 'The town of Dover'," ", 'Inside the cathedral on the castle grounds', 'An old lighthouse');
+
+	var canterbury = '8 June <br/ ><br/ >' +
+	'Canterbury was an easy 25 minute train ride from Dover. I stopped here for the afternoon before heading back into London and my flight ' +
+	'home to Virginia the next day. The town reminded me a lot of Bath actually: there was a large pedestrian walkway through the main part ' +
+	'of town surrounded by stores and restaurants and was bustling on the nice day that it was. There were a lot of tourists as well, as the ' +
+	'town is probably a popular day trip from London. <br/ ><br/ >' +
+	'The main attraction in town was Canterbury Cathedral. It is the head of the Anglican Communion worldwide, and had some incredible interior ' +
+	'art and architecture. Unfortunately, close to the entire cathedral was covered in scaffolding, inside and out, and took a bit away from ' +
+	'the beauty of the place. Had it not been covered in so much scaffolding it might have made my list of top five cathedrals I visited. ' +
+	'There were some incredible panels of stain glass windows and the main nave and quire were pretty beautiful as well. <br/ ><br/ >' +
+	'Although my stay in Canterbury was short, it was an awesome smaller city to spend my last day in the UK at, and I was a big fan of how ' +
+	'similar it was to my home city of Bath.';
+	
+	var canterburyCaps = new Array('Westgate Towers', 'Geoffrey Chaucer, the pride of Canterbury', 'The spectacular Canterbury Cathedral, head of the Anglican Communion worldwide… covered in scaffolding', 'Inside the cathedral. Scaffolding covered the ceiling inside as well', 'Some awesome towers'," ", 'The cloister had a very nice courtyard', 'The cloister had a very nice courtyard', 'The empty Chapter House', 'Ceiling of the Chapter House'," "," ", 'The main chapel', 'Canterbury Cathedral probably would have made my list of top five cathedrals I visited had there not been scaffolding everywhere. Artistry like this inside was pretty incredible'," ", 'Some amazing stain glass art'," ", 'The main entrance to the grounds of the cathedral');
+
+	function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 6,
+          center: {lat: 51.6862, lng: -2.8904}
+        });
+		placePin(51.5074, -0.1278, map, "London", london, londonCaps, 65);
+		placePin(51.3758, -2.3599, map, "Bath", bath, bathCaps, 66);
+		placePin(51.1789, -1.8262, map, "Stonehenge", stonehenge, stonehengeCaps, 11);
+		placePin(51.0688, -1.7945, map, "Salisbury", salisbury, salisburyCaps, 12);
+		placePin(51.7520, -1.2577, map, "Oxford", oxford, oxfordCaps, 13);
+		placePin(51.4816, -3.1791, map, "Cardiff", cardiff, cardiffCaps, 8);
+		placePin(52.3702, 4.8952, map, "Amsterdam", amsterdam, amsterdamCaps, 82);
+		placePin(51.8969, -8.4863, map, "Cork", cork, corkCaps, 81);
+		placePin(53.4084, -2.9916, map, "Liverpool", liverpool, liverpoolCaps, 21);
+		placePin(55.6761, 12.5683, map, "Copenhagen", copenhagen, copenhagenCaps, 74);
+		placePin(59.3293, 18.0686, map, "Stockholm", stockholm, stockholmCaps, 71);
+		placePin(41.3851, 2.1734, map, "Barcelona", barcelona, barcelonaCaps, 153);
+		placePin(39.4699, -0.3763, map, "Valencia", valencia, valenciaCaps, 54);
+		placePin(40.4168, -3.7038, map, "Madrid", madrid, madridCaps, 79);
+		placePin(39.8628, -4.0273, map, "Toledo", toledo, toledoCaps, 60);
+		placePin(41.9028, 12.4964, map, "Rome", rome, romeCaps, 152);
+		placePin(43.7696, 11.2558, map, "Florence", florence, florenceCaps, 79);
+		placePin(45.4408, 12.3155, map, "Venice", venice, veniceCaps, 44);
+		placePin(50.5719, -3.9207, map, "Dartmoor National Park", dartmoor, dartmoorCaps, 23);
+		placePin(53.1180, -4.1275, map, "Llanberis", llanberis, llanberisCaps, 31);
+		placePin(53.1236, -4.0202, map, "Pont Pen-y-Benglog & Tryfan", benglog, benglogCaps, 40);
+		placePin(53.0544, -4.1361, map, "Snowdon Peak", snowdon, snowdonCaps, 25);
+		placePin(53.1396, -4.2739, map, "Caernarfon", caernarfon, caernarfonCaps, 25);
+		placePin(53.3094, -4.6330, map, "Holyhead and crossing the Irish Sea", holyhead, holyheadCaps, 15);
+		placePin(53.3498, -6.2603, map, "Dublin", dublin, dublinCaps, 86);
+		placePin(53.2707, -9.0568, map, "Galway", galway, galwayCaps, 12);
+		placePin(53.0061, -6.3231, map, "Glendalough", glendalough, glendaloughCaps, 15);
+		placePin(53.0160, -9.3774, map, "Doolin & the Cliffs of Moher", doolin, doolinCaps, 60);
+		placePin(52.6996, -8.8119, map, "Bunratty Castle & Limerick", bunratty, bunrattyCaps, 36);
+		placePin(52.2593, -7.1101, map, "Waterford", waterford, waterfordCaps, 20);
+		placePin(52.6541, -7.2448, map, "Kilkenny", kilkenny, kilkennyCaps, 50);
+ 		placePin(51.8465, -2.1608, map, "Brockworth Cheese Rolling Festival", gloucester, gloucesterCaps, 14);
+		placePin(52.2053, 0.1218, map, "Cambridge", cambridge, cambridgeCaps, 15);
+		placePin(51.1279, 1.3134, map, "Dover", dover, doverCaps, 34);
+		placePin(51.2802, 1.0789, map, "Canterbury", canterbury, canterburyCaps, 18);
+      }
+
+      function placePin(latitude, longitude, resultsMap, place, text, captions, n) {
+            var marker = new google.maps.Marker({
+              map: resultsMap,
+              position: {lat: latitude, lng: longitude}
+            });
+            	
+            	var mainPhotoString = "main.png";
+            	if (/Android|webOS|iPhone|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent))	
+            		{
+            		mainPhotoString = "mobile.png";
+            		}
+            	var contentString = "<body><section><div><table cellpadding=\"1\"><tr><td><img src=\"" + "\" /></td><td valign='top'><p><b>" + place + 
+            	"</b></p><p>" + text + "</p>";
+            	if(place === "Dartmoor National Park")
+            		place = "Dartmoor";
+            	if(place === "Pont Pen-y-Benglog & Tryfan")
+            		place = "Tryfan";
+            	if(place === "Snowdon Peak")
+            		place = "Snowdon";
+            	if(place === "Holyhead and crossing the Irish Sea")
+            		place = "Holyhead";
+            	if(place === "Doolin & the Cliffs of Moher")
+            		place = "Doolin";
+            	if(place === "Bunratty Castle & Limerick")
+            		place = "Bunratty";
+            	if(place === "Brockworth Cheese Rolling Festival")
+            		place = "Gloucester";
+            	
+	           	var contentPhotos = "<p><a data-fancybox=\"" + place + "\" class=\"fancybox\" data-caption=\"" + captions[0] + "\" href=\"" + place + "/full/full (1).jpg\"><img src=\"" + place + "/" + mainPhotoString + "\"></a>";
+				for(var i=2; i<=n; i++)
+					{
+					contentPhotos = contentPhotos + "<a data-fancybox=\"" + place + "\" class=\"fancybox\" data-caption=\"" + captions[i-1] + "\" href=\"" + place + "/full/full (" + i + ").jpg\"></a>";
+					}
+				
+		    	var infowindow = new google.maps.InfoWindow({
+                	content: contentString + contentPhotos
+              	});
+            	marker.addListener('click', function() {
+                infowindow.open(map, marker);
+              });
+      }
+    </script>   
+    <p><table style="width:100%">
+  		<tr>
+   			<th>Top 5 Favorite Places</th>
+   			<th>Top 5 Museums</th>
+   			<th>Top 5 Cathedrals</th>
+  		</tr>
+  		<tr>
+   			<td align="center">Ireland</td>
+   			<td align="center">Rijksmuseum, Amsterdam</td>
+   			<td align="center">St Peter's Basilica, Vatican City</td>
+  		</tr>
+  		<tr>
+   			<td align="center">Madrid</td>
+   			<td align="center">Museo Nacional del Prado, Madrid</td>
+   			<td align="center">Sagrada Familia, Barcelona</td>
+  		</tr>
+  		<tr>
+   			<td align="center">Bath</td>
+   			<td align="center">The Vatican Museum</td>
+   			<td align="center">Toledo Cathedral</td>
+  		</tr>
+  		<tr>
+   			<td align="center">Snowdonia National Park</td>
+   			<td align="center">Wallace Collection, London</td>
+   			<td align="center">Il Duomo, Florence</td>
+  		</tr>
+  		<tr>
+   			<td align="center">Copenhagen</td>
+   			<td align="center">Galleria dell'Academia, Florence</td>
+   			<td align="center">Storkyrkan, Stockholm</td>
+  		</tr>
+   	</table></p>
+   	 <p><table style="width:100%">
+  		<tr>
+   			<th>Top 5 Hostels</th>
+   			<th>Top 5 Castles</th>
+  		</tr>
+  		<tr>
+   			<td align="center">Generator Stockholm</td>
+   			<td align="center">Blarney Castle, Ireland</td>
+  		</tr>
+  		<tr>
+   			<td align="center">Wombats, London</td>
+   			<td align="center">Dover Castle, England</td>
+  		</tr>
+  		<tr>
+   			<td align="center">St Christopher's, Barcelona</td>
+   			<td align="center">Caernarfon Castle, Wales</td>
+  		</tr>
+  		<tr>
+   			<td align="center">Kinlay Eyre Square, Galway</td>
+   			<td align="center">Bunratty Castle, Ireland</td>
+  		</tr>
+  		<tr>
+   			<td align="center">Generator Venice</td>
+   			<td align="center">Kilkenny Castle, Ireland</td>
+  		</tr>
+   	</table></p>
+   	<p></p>
+   	<p align=left style="color:rgb(0,0,0)"><font size = 1>
+   	3 April 2017: Site launched with Amsterdam, Bath, Cardiff, Copenhagen, Cork, Liverpool, London, Oxford, Salisbury, Stockholm, Stonehenge
+   	<br/>25 April 2017: Added Barcelona, Florence, Madrid, Rome, Toledo, Valencia, Venice
+   	<br/>2 May 2017: Added Dartmoor National Park
+   	<br/>23 May 2017: Added Bunratty Castle & Limerick, Caernarfon, Doolin & the Cliffs of Moher, Dublin, Galway, Glendalough, Holyhead and crossing the Irish Sea, Kilkenny, Llanberis, Pont Pen-y-Benglog & Tryfan, Snowdon, Waterford
+   	<br/>12 June 2017: Added Brockworth Cheese Rolling Festival, Cambridge, Canterbury, Dover
+   	</font></p>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByO-vB8sl7X1vtR9kGCdGqUu0dL9xL2dw&callback=initMap">
+    </script>
+  </body>
+</html>
